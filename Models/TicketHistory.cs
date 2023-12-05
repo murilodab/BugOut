@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace BugOut.Models
 {
@@ -18,6 +19,7 @@ namespace BugOut.Models
         [DisplayName("Current")]
         public string? NewValue { get; set; }
 
+        [DataType(DataType.Date)]
         [DisplayName("Date Modified")]
         public DateTimeOffset Created { get; set; }
 
@@ -28,7 +30,7 @@ namespace BugOut.Models
         public string? UserId { get; set; } //Foreign Key
 
         //Navigation Properties
-        public virtual Ticket Ticket { get; set; }
+        public virtual Ticket? Ticket { get; set; }
         public virtual AppUser? User { get; set; }
 
     }

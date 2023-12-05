@@ -10,8 +10,9 @@ namespace BugOut.Models
         [DisplayName("Member Comment")]
         public  string?  Comment { get; set; }
 
+        [DataType(DataType.Date)]
         [DisplayName("Date")]
-        public DateTimeOffset? Created { get; set; }
+        public DateTimeOffset Created { get; set; }
 
         [DisplayName("Ticket")]
         public int TicketId { get; set; }
@@ -20,7 +21,7 @@ namespace BugOut.Models
         public string? UserId { get; set;}
 
         //Navigation Properties
-        public virtual Ticket Ticket {  get; set; }
+        public virtual Ticket? Ticket {  get; set; }
 
         public virtual AppUser? User { get; set; }
     }
