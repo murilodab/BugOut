@@ -18,6 +18,7 @@ namespace BugOut.Models
         public virtual ICollection<AppUser>? Members { get; set; } = new HashSet<AppUser>();
         public virtual ICollection<Project>? Projects { get; set; } = new HashSet<Project>();
 
+        //Create Relationship to Invite
 
     }
 }
