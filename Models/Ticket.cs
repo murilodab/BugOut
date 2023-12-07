@@ -27,7 +27,7 @@ namespace BugOut.Models
         [DisplayName("Arquived")]
         public bool? Archived { get; set; }
 
-        [DisplayName("Description")]
+        [DisplayName("Project")]
         public int ProjectId { get; set; } //fk
 
         [DisplayName("Ticket Type")]
@@ -47,7 +47,7 @@ namespace BugOut.Models
 
         //Navigation Properties
 
-        public virtual Project Project { get; set; }
+        public virtual Project? Project { get; set; }
         public virtual TicketType? TicketType { get; set; }
         public virtual TicketPriority? TicketPriority { get; set; }
         public virtual TicketStatus? TicketStatus { get; set; }

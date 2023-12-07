@@ -1,0 +1,61 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+
+namespace BugOut.Models
+{
+    public class Project
+    {
+        public int Id { get; set; }
+        [DisplayName("Company")]
+        public int CompanyId { get; set; }
+        [Required]
+        [StringLength(50)]
+        [DisplayName("Project Name")]
+        public string? Name { get; set; }
+        [DisplayName("Description")]
+        public  string? Description { get; set; }
+
+
+        [DataType(DataType.Date)]
+        [DisplayName("Started")]
+        public DateTimeOffset StartDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayName("Finished")]
+        public DateTimeOffset? EndDate { get; set; }
+
+
+        [DisplayName("Priority")]
+        public int? ProjectPriorityId { get; set; }
+
+
+        [NotMapped]
+        [DataType(DataType.Upload)]
+        public IFormFile? ImageFormFile { get; set; }
+
+        [DisplayName("File Name")]
+        public string? ImageFileName { get; set; }
+
+        public byte[]? ImageFileData { get; set; }
+
+        [DisplayName("File Extension")]
+        public string? ImageContentType { get; set; }
+
+        [DisplayName("Archived")]
+        public bool? Archived { get; set; }
+
+        //Navigation Properties
+
+        public virtual Company? Company { get; set; }
+        public virtual ProjectPriority? ProjectPriority { get; set; }
+
+
+        public virtual ICollection<AppUser>? Members { get; set; } = new HashSet<AppUser>();
+        public virtual ICollection<Ticket>? Tickets { get; set; } = new HashSet<Ticket>();
+
+
+
+
+
+    }
+}
