@@ -7,12 +7,15 @@ namespace BugOut.Models
     public class Project
     {
         public int Id { get; set; }
+
         [DisplayName("Company")]
         public int CompanyId { get; set; }
+
         [Required]
         [StringLength(50)]
         [DisplayName("Project Name")]
         public string? Name { get; set; }
+
         [DisplayName("Description")]
         public  string? Description { get; set; }
 
@@ -20,6 +23,7 @@ namespace BugOut.Models
         [DataType(DataType.Date)]
         [DisplayName("Started")]
         public DateTimeOffset StartDate { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayName("Finished")]
         public DateTimeOffset? EndDate { get; set; }
