@@ -55,7 +55,7 @@ namespace BugOut.Models
 
 
         public virtual ICollection<AppUser>? Members { get; set; } = new HashSet<AppUser>();
-        public virtual ICollection<Ticket>? Tickets { get; set; } = new HashSet<Ticket>();
+        public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
 
 
 
