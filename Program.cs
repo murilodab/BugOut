@@ -1,5 +1,7 @@
 using BugOut.Data;
 using BugOut.Models;
+using BugOut.Services;
+using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +22,8 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
     .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddScoped<IAppRolesService, AppRolesService>();
 
 builder.Services.AddControllersWithViews();
 
