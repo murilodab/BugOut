@@ -25,39 +25,57 @@ namespace BugOut.Services
             return result;
         }
 
-        public Task<string> GetRoleNameByIdAsync(string roleId)
+        public async Task<string> GetRoleNameByIdAsync(string roleId)
         {
-            throw new NotImplementedException();
+            IdentityRole role = _context.Roles.Find(roleId);
+            string result = await _roleManager.GetRoleNameAsync(role);
+
+            return result;
         }
 
-        public Task<IEnumerable<string>> GetUserRolesAsync(AppUser user)
+        public async Task<IEnumerable<string>> GetUserRolesAsync(AppUser user)
         {
-            throw new NotImplementedException();
+            IEnumerable<string> result = await _userManager.GetRolesAsync(user);
+
+            return result;
         }
 
-        public Task<List<AppUser>> GetUsersInRoleAsync(string roleName, int companyId)
+        public async Task<List<AppUser>> GetUsersInRoleAsync(string roleName, int companyId)
         {
-            throw new NotImplementedException();
+            List<AppUser> users = (await _userManager.GetUsersInRoleAsync(roleName)).ToList();
+
+            return users.Where(u => u.CompanyId == companyId).ToList();
         }
 
-        public Task<List<AppUser>> GetUsersNotInRoleAsync(string roleName, int companyId)
+        public async Task<List<AppUser>> GetUsersNotInRoleAsync(string roleName, int companyId)
         {
-            throw new NotImplementedException();
+            List<string> usersIdsInRole = (await _userManager.GetUsersInRoleAsync(roleName)).Select(u => u.Id).ToList();
+
+            List<AppUser> usersNotInRole= _context.Users.Where(u => !usersIdsInRole.Contains(u.Id)).ToList();
+
+
+            return usersNotInRole.Where(u => u.CompanyId == companyId).ToList();
         }
 
-        public Task<bool> IsUserInRoleAsync(AppUser user, string roleName)
+        public async Task<bool> IsUserInRoleAsync(AppUser user, string roleName)
         {
-            throw new NotImplementedException();
+            bool result = await _userManager.IsInRoleAsync(user, roleName);
+
+            return result;
         }
 
-        public Task<bool> RemoveUserFromRoleAsync(AppUser user, string roleName)
+        public async Task<bool> RemoveUserFromRoleAsync(AppUser user, string roleName)
         {
-            throw new NotImplementedException();
+            bool result = (await _userManager.RemoveFromRoleAsync(user, roleName)).Succeeded;
+
+            return result;
         }
 
-        public Task<bool> RemoveUserFromRolesAsync(AppUser user, IEnumerable<string> roles)
+        public async Task<bool> RemoveUserFromRolesAsync(AppUser user, IEnumerable<string> roles)
         {
-            throw new NotImplementedException();
+            bool result = (await _userManager.RemoveFromRolesAsync(user, roles)).Succeeded;
+
+            return result;
         }
     }
 }
