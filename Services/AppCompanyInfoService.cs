@@ -2,6 +2,7 @@
 using BugOut.Models;
 using BugOut.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 namespace BugOut.Services
 {
@@ -28,6 +29,16 @@ namespace BugOut.Services
                                                             .Include(p => p.Tickets)
                                                                 .ThenInclude(p => p.Comments)
                                                             .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.Attachments)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.History)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.DeveloperUser)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.OwnerUser)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.Notifications)
+                                                            .Include(p => p.Tickets)
                                                                 .ThenInclude(p => p.TicketStatus)
                                                              .Include(p => p.Tickets)
                                                                 .ThenInclude(p => p.TicketPriority)
@@ -41,14 +52,29 @@ namespace BugOut.Services
 
         public async Task<List<Ticket>> GetAllTicketsAsync(int? companyId)
         {
-            List<Ticket> tickets = await _context.Tickets.Where(t => t.Project.CompanyId == companyId).ToListAsync();
+            List<Ticket> tickets = new();
+
+            List<Project> projects = await GetAllProjectsAsync(companyId);
+
+            tickets = projects.SelectMany(p => p.Tickets).ToList();
 
             return tickets;
         }
 
-        public Task<Company> GetCompanyInfoByIdAsync(int? companyId)
+        public async Task<Company> GetCompanyInfoByIdAsync(int? companyId)
         {
+            Company companyInfo = new();
 
+            if (companyId != null)
+            {
+                companyInfo = await _context.Companies
+                    .Include(c => c.Members)
+                    .Include(c => c.Projects)
+                    .Include(c => c.Invites)
+                    .FirstOrDefaultAsync(c => c.Id == companyId);
+            }
+
+            return companyInfo;
         }
     }
 }
