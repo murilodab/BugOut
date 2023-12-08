@@ -23,7 +23,9 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+//Services
 builder.Services.AddScoped<IAppRolesService, AppRolesService>();
+builder.Services.AddScoped<IAppCompanyInfoService, AppCompanyInfoService>();
 
 builder.Services.AddControllersWithViews();
 
