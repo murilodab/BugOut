@@ -47,14 +47,21 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
+        public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
         {
-            throw new NotImplementedException();
+            List<Project> projects = await GetAllProjectsByCompany(companyId);
+
+            int priorityId = await LookupProjectPriorityId(priorityName);
+
+            return projects.Where(p => p.ProjectPriorityId == priorityId).ToList();
         }
 
-        public Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
+        public async Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
         {
-            throw new NotImplementedException();
+            List<Project> projects = await GetAllProjectsByCompany(companyId);
+
+            return projects.Where(p => p.Archived == true).ToList();
+
         }
 
         public Task<List<AppUser>> GetDevelopersOnProjectAsync(int projectId)
@@ -88,9 +95,31 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<Project>> GettAllProjectsByCompany(int companyId)
+        public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
         {
-            throw new NotImplementedException();
+            List<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == false)
+                                                            .Include(p => p.Members)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.Comments)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.Attachments)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.History)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.DeveloperUser)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.OwnerUser)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.Notifications)
+                                                            .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.TicketStatus)
+                                                             .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.TicketPriority)
+                                                             .Include(p => p.Tickets)
+                                                                .ThenInclude(p => p.TicketType)
+                                                            .Include(p => p.ProjectPriority)
+                                                            .ToListAsync();
+            return projects;
         }
 
         public Task<List<Project>> GetUserProjectsAsync(string userId)
@@ -103,14 +132,16 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task<bool> IsUserOnProject(string userId, int projectId)
+        public Task<bool> IsUserOnProjectAsync(string userId, int projectId)
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> LookupProjectPriorityId(string priorityName)
+        public async Task<int> LookupProjectPriorityId(string priorityName)
         {
-            throw new NotImplementedException();
+            int priorityId = (await _context.ProjectPriorities.FirstOrDefaultAsync(p => p.Name == priorityName)).Id;
+
+            return priorityId;
         }
 
         public Task RemoveProjectManagerAsync(int projectId)

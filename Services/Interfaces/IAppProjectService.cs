@@ -8,7 +8,7 @@ namespace BugOut.Services.Interfaces
         public Task<bool> AddProjectManagerAsync(string userId, int projectId);
         public Task<bool> AddUserToProjectAsync(string userId, int projectId);
         public Task ArchiveProjectAsync(Project project);
-        public Task<List<Project>> GettAllProjectsByCompany(int companyId);
+        public Task<List<Project>> GetAllProjectsByCompany(int companyId);
         public Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName);
         public Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId);
         public Task<List<Project>> GetArchivedProjectsByCompany(int companyId);
@@ -19,7 +19,7 @@ namespace BugOut.Services.Interfaces
         public Task<List<AppUser>> GetSubmittersOnProjectAsync(int projectId);
         public Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int comopanyId);
         public Task<List<Project>>GetUserProjectsAsync(string userId);
-        public Task<bool> IsUserOnProject(string userId, int projectId);
+        public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
         public Task<int> LookupProjectPriorityId(string priorityName);
         public Task RemoveProjectManagerAsync(int projectId);
         public Task RemoveUsersFromProjectByRoleAsync(string role, int projectId);
