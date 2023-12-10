@@ -1,13 +1,28 @@
-﻿using BugOut.Models;
+﻿using BugOut.Data;
+using BugOut.Models;
 using BugOut.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugOut.Services
 {
     public class AppProjectService : IAppProjectService
     {
-        public Task AddNewProjectAsync(Project project)
+        private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public AppProjectService(ApplicationDbContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            throw new NotImplementedException();
+            _context = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
+        }
+
+        public async Task AddNewProjectAsync(Project project)
+        {
+            _context.Add(project);
+            await _context.SaveChangesAsync();
         }
 
         public Task<bool> AddProjectManagerAsync(string userId, int projectId)
@@ -20,9 +35,11 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task ArchiveProjectAsync(Project project)
+        public async Task ArchiveProjectAsync(Project project)
         {
-            throw new NotImplementedException();
+            project.Archived = true;
+            _context.Update(project);
+            await _context.SaveChangesAsync();
         }
 
         public Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId)
@@ -45,9 +62,15 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task<Project> GetProjectByIdAsync(int projectId, int companyId)
+        public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            Project project = await _context.Projects
+                                                    .Include(p => p.Tickets)
+                                                    .Include(p=> p.Members)
+                                                    .Include(p => p.ProjectPriority)
+                                                    .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);   
+
+            return project;
         }
 
         public Task<AppUser> GetProjectManagerASync(int projectId)
@@ -105,9 +128,10 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task UpdateProjectAsync(Project project)
+        public async Task UpdateProjectAsync(Project project)
         {
-            throw new NotImplementedException();
+            _context.Update(project);
+            await _context.SaveChangesAsync();
         }
     }
 }
