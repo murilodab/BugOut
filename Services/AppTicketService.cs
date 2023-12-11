@@ -1,18 +1,30 @@
-﻿using BugOut.Models;
+﻿using BugOut.Data;
+using BugOut.Models;
 using BugOut.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugOut.Services
 {
     public class AppTicketService : IAppTicketService
     {
-        public Task AddNewTicketAsync(Ticket ticket)
+        private readonly ApplicationDbContext _context;
+
+        public AppTicketService(ApplicationDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task ArchiveTicketAsync(Ticket ticket)
+        public async Task AddNewTicketAsync(Ticket ticket)
         {
-            throw new NotImplementedException();
+            _context.Add(ticket);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task ArchiveTicketAsync(Ticket ticket)
+        {
+            ticket.Archived = true;
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
         }
 
         public Task AssignTicketAsync(int ticketId, string userId)
@@ -65,9 +77,12 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task<Ticket> GetTicketByIdAsync(int ticketId)
+        public async Task<Ticket> GetTicketByIdAsync(int ticketId)
         {
-            throw new NotImplementedException();
+            Ticket ticket = await _context.Tickets
+                .FirstOrDefaultAsync(t => t.Id == ticketId);
+            
+            return ticket;
         }
 
         public Task<AppUser> GetTicketDeveloperAsync(int ticketId)
@@ -85,24 +100,55 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public Task<int?> LookupTicketPriorityIdAsync(string priorityName)
+        public async Task<int?> LookupTicketPriorityIdAsync(string priorityName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p => p.Name == priorityName);
+                
+                return priority?.Id;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<int?> LookupTicketStatusIdAsync(string statusName)
+        public async Task<int?> LookupTicketStatusIdAsync(string statusName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TicketStatus status = await _context.TicketStatuses.FirstOrDefaultAsync(p => p.Name == statusName);
+
+                return status?.Id;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task<int?> LookupTicketTypeIdAsync(string typeName)
+        public async Task<int?> LookupTicketTypeIdAsync(string typeName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                TicketType type = await _context.TicketTypes.FirstOrDefaultAsync(p => p.Name == typeName);
+
+                return type?.Id;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Task UpdateTicketAsync(Ticket ticket)
+        public async Task UpdateTicketAsync(Ticket ticket)
         {
-            throw new NotImplementedException();
+            _context.Update(ticket);
+            await _context.SaveChangesAsync();
         }
     }
 }
