@@ -1,5 +1,6 @@
 ﻿using BugOut.Data;
 using BugOut.Models;
+using BugOut.Models.Enums;
 using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Construction;
@@ -28,9 +29,33 @@ namespace BugOut.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task<bool> AddProjectManagerAsync(string userId, int projectId)
+        public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
-            throw new NotImplementedException();
+            AppUser projectManager = await GetProjectManagerAsync(projectId);
+
+            if(projectManager != null)
+            {
+                try
+                {
+                    await RemoveProjectManagerAsync(projectId);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"**** ERROR **** - Failed to Remove the Current Project Manager. --> {ex.Message}");
+                    return false;
+                }
+            }
+
+            try
+            {
+                await AddUserToProjectAsync(userId, projectId);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"**** ERROR **** - Failed to Add the New Project Manager. --> {ex.Message}");
+                return false;
+            }
         }
 
         public async Task<bool> AddUserToProjectAsync(string userId, int projectId)
@@ -71,9 +96,15 @@ namespace BugOut.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId)
+        public async Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId)
         {
-            throw new NotImplementedException();
+            List<AppUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.Developer.ToString());
+            List<AppUser> submitters = await GetProjectMembersByRoleAsync(projectId, Roles.Submitter.ToString());
+            List<AppUser> admins = await GetProjectMembersByRoleAsync(projectId, Roles.Admin.ToString());
+
+            List<AppUser> teamMembers = developers.Concat(submitters).Concat(admins).ToList();
+
+            return teamMembers;
         }
 
         public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
@@ -109,9 +140,21 @@ namespace BugOut.Services
             return project;
         }
 
-        public Task<AppUser> GetProjectManagerASync(int projectId)
+        public async Task<AppUser> GetProjectManagerAsync(int projectId)
         {
-            throw new NotImplementedException();
+            Project project = await _context.Projects
+                .Include(p => p.Members)
+                .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            foreach(AppUser user in project?.Members)
+            {
+                if (await _rolesService.IsUserInRoleAsync(user, Roles.ProjectManager.ToString()))
+                {
+                    return user;
+                }
+            }
+
+            return null;
         }
 
         public async Task<List<AppUser>> GetProjectMembersByRoleAsync(int projectId, string role)
@@ -201,9 +244,11 @@ namespace BugOut.Services
             }
         }
 
-        public Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int comopanyId)
+        public async Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            List<AppUser> users = await _context.Users.Where(u => u.Projects.All(p => p.Id != projectId)).ToListAsync();
+
+            return users.Where(u => u.CompanyId == companyId).ToList();
         }
 
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
@@ -230,9 +275,26 @@ namespace BugOut.Services
             return priorityId;
         }
 
-        public Task RemoveProjectManagerAsync(int projectId)
+        public async Task RemoveProjectManagerAsync(int projectId)
         {
-            throw new NotImplementedException();
+            Project project = await _context.Projects
+                                            .Include(p => p.Members)
+                                            .FirstOrDefaultAsync(p => p.Id == projectId);
+
+            try
+            {
+                foreach(AppUser user in project?.Members)
+                {
+                    if(await _rolesService.IsUserInRoleAsync(user, Roles.ProjectManager.ToString()))
+                    {
+                        await RemoveUserFromProjectAsync(user.Id, projectId);
+                    }
+                }
+
+            }catch(Exception)
+            {
+                throw;
+            }
         }
 
         public async Task RemoveUserFromProjectAsync(string userId, int projectId)
@@ -273,13 +335,15 @@ namespace BugOut.Services
                     try
                     {
                         project.Members.Remove(user);
-                        await _context.SaveChangesAsync();
+                        
                     }
                     catch (Exception)
                     {
                         throw;
                     }
                 }
+
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
