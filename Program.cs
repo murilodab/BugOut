@@ -26,6 +26,7 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
 //Services
 builder.Services.AddScoped<IAppRolesService, AppRolesService>();
 builder.Services.AddScoped<IAppCompanyInfoService, AppCompanyInfoService>();
+builder.Services.AddScoped<IAppProjectService, AppProjectService>();
 
 builder.Services.AddControllersWithViews();
 
