@@ -25,8 +25,16 @@ namespace BugOut.Services
 
         public async Task AddNewProjectAsync(Project project)
         {
-            _context.Add(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Add(project);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)

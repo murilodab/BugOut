@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+builder.Services.AddRazorPages()
+    .AddRazorRuntimeCompilation();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -30,8 +32,7 @@ builder.Services.AddScoped<IAppProjectService, AppProjectService>();
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddRazorPages()
-    .AddRazorRuntimeCompilation();
+
 
 var app = builder.Build();
 
