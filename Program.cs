@@ -30,6 +30,7 @@ builder.Services.AddScoped<IAppRolesService, AppRolesService>();
 builder.Services.AddScoped<IAppCompanyInfoService, AppCompanyInfoService>();
 builder.Services.AddScoped<IAppProjectService, AppProjectService>();
 builder.Services.AddScoped<IAppTicketService, AppTicketService>();
+builder.Services.AddScoped<IAppTicketHistoryService, AppTicketHistoryService>();
 
 builder.Services.AddControllersWithViews();
 
