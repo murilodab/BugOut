@@ -3,6 +3,7 @@ using BugOut.Models;
 using BugOut.Services;
 using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,9 @@ builder.Services.AddScoped<IAppCompanyInfoService, AppCompanyInfoService>();
 builder.Services.AddScoped<IAppProjectService, AppProjectService>();
 builder.Services.AddScoped<IAppTicketService, AppTicketService>();
 builder.Services.AddScoped<IAppTicketHistoryService, AppTicketHistoryService>();
+builder.Services.AddScoped<IEmailSender, AppEmailService>();
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 builder.Services.AddControllersWithViews();
 
