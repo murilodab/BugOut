@@ -12,14 +12,11 @@ namespace BugOut.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IAppRolesService _rolesService;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+       
 
         public AppProjectService(ApplicationDbContext context, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, IAppRolesService roleService)
         {
             _context = context;
-            _userManager = userManager;
-            _roleManager = roleManager;
             _rolesService = roleService;
         }
 
