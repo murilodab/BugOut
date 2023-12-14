@@ -7,7 +7,7 @@ namespace BugOut.Models
         public int Id { get; set; }
 
         [DisplayName("Date Sent")]
-        public DateTimeOffset? InviteDate { get; set; }
+        public DateTimeOffset InviteDate { get; set; }
 
         [DisplayName("Join Date")]
         public DateTimeOffset? JoinDate { get; set; }

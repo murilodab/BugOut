@@ -33,6 +33,7 @@ builder.Services.AddScoped<IAppProjectService, AppProjectService>();
 builder.Services.AddScoped<IAppTicketService, AppTicketService>();
 builder.Services.AddScoped<IAppTicketHistoryService, AppTicketHistoryService>();
 builder.Services.AddScoped<IAppNotificationService, AppNotificationService>();
+builder.Services.AddScoped<IAppInviteService, AppInviteService>();
 //EmailService
 builder.Services.AddScoped<IEmailSender, AppEmailService>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
