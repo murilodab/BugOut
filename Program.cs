@@ -6,17 +6,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+var configuration = builder.Configuration;
+
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 
-
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(DataUtility.GetConnectionString(configuration)));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -44,6 +47,8 @@ builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
+
+await DataUtility.ManageDataAsync(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

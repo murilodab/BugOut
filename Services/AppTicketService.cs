@@ -369,7 +369,7 @@ namespace BugOut.Services
         {
             try
             {
-                TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p => p.Name == priorityName);
+                Models.TicketPriority priority = await _context.TicketPriorities.FirstOrDefaultAsync(p => p.Name == priorityName);
 
                 return priority?.Id;
 
