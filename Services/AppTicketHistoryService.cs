@@ -159,10 +159,10 @@ namespace BugOut.Services
                                                                             .ThenInclude(t => t.History)
                                                                                 .ThenInclude(h => h.User)
                                                                     .FirstOrDefaultAsync(c => c.Id == companyId)).Projects.ToList();
-                
+
                 List<Ticket> tickets = projects.SelectMany(p => p.Tickets).ToList();
 
-                List<TicketHistory>  ticketHistories = tickets.SelectMany(t => t.History).ToList();
+                List<TicketHistory> ticketHistories = tickets.SelectMany(t => t.History).ToList();
 
                 return ticketHistories;
             }

@@ -6,6 +6,6 @@ namespace BugOut.Services.Interfaces
     {
         Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId);
         Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int projectId, int companyId);
-        Task<List<TicketHistory>> GetCompanyTicketHistoriesAsync(int companyId);     
+        Task<List<TicketHistory>> GetCompanyTicketHistoriesAsync(int companyId);
     }
 }
