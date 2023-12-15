@@ -45,7 +45,7 @@ namespace BugOut.Services
             decimal fileSize = bytes;
             while (Math.Round(fileSize/1024) >= 1)
             {
-                fileSize /= bytes;
+                fileSize /= 1024;
                 counter++;
             }
             return string.Format("{0:n1}{1}", fileSize, suffixes[counter]);
