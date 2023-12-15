@@ -2,6 +2,7 @@
 using BugOut.Models;
 using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugOut.Services
 {
@@ -18,12 +19,32 @@ namespace BugOut.Services
             _userManager = userManager;
         }
 
+        #region Add User To Role
         public async Task<bool> AddUserToRoleAsync(AppUser user, string roleName)
         {
             bool result = (await _userManager.AddToRoleAsync(user, roleName)).Succeeded;
 
             return result;
-        }
+        } 
+        #endregion
+
+        #region Get Roles
+        public async Task<List<IdentityRole>> GetRolesAsync()
+        {
+            try
+            {
+                List<IdentityRole> result = new();
+
+                result = await _context.Roles.ToListAsync();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        } 
+        #endregion
 
         public async Task<string> GetRoleNameByIdAsync(string roleId)
         {

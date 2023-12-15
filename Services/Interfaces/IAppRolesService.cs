@@ -1,4 +1,5 @@
 ﻿using BugOut.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Identity.Client;
 
 namespace BugOut.Services.Interfaces
@@ -6,6 +7,8 @@ namespace BugOut.Services.Interfaces
     public interface IAppRolesService
     {
         public Task<bool> IsUserInRoleAsync (AppUser user, string roleName);
+
+        public Task<List<IdentityRole>> GetRolesAsync();
         public Task<IEnumerable<string>> GetUserRolesAsync(AppUser user);
         public Task<bool> AddUserToRoleAsync (AppUser user, string roleName);
         public Task<bool> RemoveUserFromRoleAsync(AppUser user, string roleName);
