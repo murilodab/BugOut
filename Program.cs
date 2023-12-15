@@ -15,11 +15,14 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 var configuration = builder.Configuration;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 builder.Services.AddRazorPages()
     .AddRazorRuntimeCompilation();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(DataUtility.GetConnectionString(configuration)));
+    options.UseNpgsql(DataUtility.GetConnectionString(configuration),
+    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

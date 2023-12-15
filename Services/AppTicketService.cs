@@ -10,10 +10,10 @@ namespace BugOut.Services
     public class AppTicketService : IAppTicketService
     {
         private readonly ApplicationDbContext _context;
-        private readonly AppRolesService _rolesService;
-        private readonly AppProjectService _projectService;
+        private readonly IAppRolesService _rolesService;
+        private readonly IAppProjectService _projectService;
 
-        public AppTicketService(ApplicationDbContext context, AppRolesService roleService, AppProjectService projectService)
+        public AppTicketService(ApplicationDbContext context, IAppRolesService roleService, IAppProjectService projectService)
         {
             _context = context;
             _rolesService = roleService;
