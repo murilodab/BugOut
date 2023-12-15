@@ -1,6 +1,7 @@
 using BugOut.Data;
 using BugOut.Models;
 using BugOut.Services;
+using BugOut.Services.Factories;
 using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -28,6 +29,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
+    .AddClaimsPrincipalFactory<AppUserClaimsPrincipalFactory>()
     .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
