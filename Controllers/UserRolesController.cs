@@ -21,6 +21,7 @@ namespace BugOut.Controllers
 
 
         //GET
+        [HttpGet]
         public async Task<IActionResult> ManageUserRoles()
         {
             //Add an instance of the ViewModel as a list
@@ -36,7 +37,7 @@ namespace BugOut.Controllers
             //- instantiate ViewModel
             // - use -rolesService
             // - Create multi-selects
-            foreach(AppUser user in users)
+            foreach (AppUser user in users)
             {
                 ManageUserRolesViewModel viewModel = new();
                 viewModel.AppUser = user;
