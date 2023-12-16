@@ -21,11 +21,11 @@ namespace BugOut.Models
 
 
         [DataType(DataType.Date)]
-        [DisplayName("Started")]
+        [DisplayName("Start Date")]
         public DateTimeOffset StartDate { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayName("Finished")]
+        [DisplayName("End Date")]
         public DateTimeOffset? EndDate { get; set; }
 
 
