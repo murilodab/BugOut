@@ -19,12 +19,16 @@ namespace BugOut.Controllers
         private readonly IAppLookupService _lookupService;
         private readonly ApplicationDbContext _context;
         private readonly IAppRolesService _rolesService;
+        private readonly IAppFileService _fileService;
+        private readonly IAppProjectService _projectService;
 
-        public ProjectsController(ApplicationDbContext context, IAppRolesService rolesService, IAppLookupService lookupService)
+        public ProjectsController(ApplicationDbContext context, IAppRolesService rolesService, IAppLookupService lookupService, IAppFileService fileService, IAppProjectService projectService)
         {
             _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
+            _fileService = fileService;
+            _projectService = projectService;
         }
 
         // GET: Projects
@@ -72,20 +76,48 @@ namespace BugOut.Controllers
         // POST: Projects/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        #region Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CompanyId,Name,Description,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageFileData,ImageContentType,Archived")] Project project)
+        public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
-            if (ModelState.IsValid)
+          if(model != null)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                int companyId = User.Identity.GetCompanyId().Value;
+
+                try
+                {
+                    if(model.Project.ImageFormFile != null)
+                    {
+                        model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
+                        model.Project.ImageContentType = model.Project.ImageFormFile.ContentType;
+                    }
+
+                    model.Project.CompanyId = companyId;
+
+                    await _projectService.AddNewProjectAsync(model.Project);
+
+                    //Add PM if one was chosen
+                    if (!string.IsNullOrEmpty(model.PMId))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PMId, model.Project.Id);
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+                //TODO: Redirect to All Projects
+                return RedirectToAction("Index");
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Id", project.ProjectPriorityId);
-            return View(project);
-        }
+             
+         
+            return RedirectToAction("Create");
+        } 
+        #endregion
 
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
