@@ -228,6 +228,7 @@ namespace BugOut.Services
             return projects;
         }
 
+        #region Get User Projects
         public async Task<List<Project>> GetUserProjectsAsync(string userId)
         {
             try
@@ -245,7 +246,7 @@ namespace BugOut.Services
                             .ThenInclude(t => t.OwnerUser)
                     .Include(u => u.Projects)
                         .ThenInclude(t => t.Tickets)
-                            .ThenInclude(t=> t.TicketPriority)
+                            .ThenInclude(t => t.TicketPriority)
                     .Include(u => u.Projects)
                         .ThenInclude(t => t.Tickets)
                             .ThenInclude(t => t.TicketStatus)
@@ -262,7 +263,8 @@ namespace BugOut.Services
                 Console.WriteLine($"**** ERROR ***** - Failed to Get User Projects. ---> {ex.Message}");
                 throw;
             }
-        }
+        } 
+        #endregion
 
         public async Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
         {

@@ -11,6 +11,8 @@ using BugOut.Extensions;
 using BugOut.Models.ViewModels;
 using BugOut.Services.Interfaces;
 using BugOut.Models.Enums;
+using Org.BouncyCastle.Bcpg;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugOut.Controllers
 {
@@ -21,22 +23,38 @@ namespace BugOut.Controllers
         private readonly IAppRolesService _rolesService;
         private readonly IAppFileService _fileService;
         private readonly IAppProjectService _projectService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, IAppRolesService rolesService, IAppLookupService lookupService, IAppFileService fileService, IAppProjectService projectService)
+        public ProjectsController(ApplicationDbContext context, IAppRolesService rolesService, IAppLookupService lookupService, IAppFileService fileService, IAppProjectService projectService, UserManager<AppUser> userManager)
         {
             _context = context;
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
             _projectService = projectService;
+            _userManager = userManager;
         }
 
         // GET: Projects
+        #region Index
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
+
+        //GET: My Projects
+        #region My Projects
+        public async Task<IActionResult> MyProjects()
+        {
+            string userId = _userManager.GetUserId(User);
+
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+
+            return View(projects);
+        }
+        #endregion
 
         // GET: Projects/Details/5
         #region Create
