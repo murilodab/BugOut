@@ -46,7 +46,7 @@ namespace BugOut.Models
         public string? ImageContentType { get; set; }
 
         [DisplayName("Archived")]
-        public bool? Archived { get; set; }
+        public bool Archived { get; set; }
 
         //Navigation Properties
 

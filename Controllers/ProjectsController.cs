@@ -182,10 +182,11 @@ namespace BugOut.Controllers
 
 
             return RedirectToAction("Edit");
-        } 
+        }
         #endregion
 
         // GET: Projects/Delete/5
+        #region Archive
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -204,8 +205,10 @@ namespace BugOut.Controllers
 
             return View(project);
         }
+        #endregion
 
         // POST: Projects/Delete/5
+        #region Archive Confirmed
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -215,9 +218,48 @@ namespace BugOut.Controllers
             var project = await _projectService.GetProjectByIdAsync(id, companyId);
 
             await _projectService.ArchiveProjectAsync(project);
-            
+
             return RedirectToAction(nameof(Index));
         }
+        #endregion
+
+        // GET: Projects/Delete/5
+        #region Restore
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            var project = await _projectService.GetProjectByIdAsync(id.Value, companyId);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+        #endregion
+
+        // POST: Projects/Delete/5
+        #region Restore Confirmed
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            var project = await _projectService.GetProjectByIdAsync(id, companyId);
+
+            await _projectService.RestoreProjectAsync(project);
+
+            return RedirectToAction(nameof(Index));
+        }
+        #endregion
 
         private bool ProjectExists(int id)
         {

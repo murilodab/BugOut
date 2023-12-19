@@ -25,7 +25,10 @@ namespace BugOut.Models
         public DateTimeOffset? Updated { get; set; }
 
         [DisplayName("Arquived")]
-        public bool? Archived { get; set; }
+        public bool Archived { get; set; }
+
+        [DisplayName("Archived By Project")]
+        public bool ArchivedByProject { get; set; }
 
         [DisplayName("Project")]
         public int ProjectId { get; set; } //fk
