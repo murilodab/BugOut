@@ -1,20 +1,18 @@
 ﻿@model IEnumerable<BugOut.Models.Project>
 @using BugOut.Models.Enums
+@using Microsoft.AspNetCore.Identity
+@using BugOut.Services.Interfaces
+
+@inject UserManager<AppUser> UserManager
+@inject IAppProjectService ProjectService
 
 @{
-    ViewData["Title"] = "My Projects";
+    ViewData["Title"] = "Archived Projects";
+    AppUser appUser = await UserManager.GetUserAsync(User);
 }
 
-<h1>My Projects</h1>
+<h1>Archived Projects</h1>
 
-@if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
-{
-
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
-
-}
 
 
 
@@ -93,19 +91,18 @@
                     @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
                 </td>
                 <td>
-                    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+
+                    @{
+                        bool isProjectManager = (await ProjectService.GetProjectManagerAsync(item.Id))?.Id == appUser.Id;
+                    }
+
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+
+                    @if (User.IsInRole(nameof(Roles.Admin)) || isProjectManager)
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
 
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                        @if (item.Archived)
-                        {
-                            <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
-                        }
-                        else
-                        {
-                            <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
-                        }
+                        <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
                     }
 
                 </td>

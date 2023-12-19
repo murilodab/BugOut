@@ -24,8 +24,15 @@ namespace BugOut.Controllers
         private readonly IAppFileService _fileService;
         private readonly IAppProjectService _projectService;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IAppCompanyInfoService _companyInfoService;
 
-        public ProjectsController(ApplicationDbContext context, IAppRolesService rolesService, IAppLookupService lookupService, IAppFileService fileService, IAppProjectService projectService, UserManager<AppUser> userManager)
+        public ProjectsController(ApplicationDbContext context, 
+            IAppRolesService rolesService, 
+            IAppLookupService lookupService, 
+            IAppFileService fileService, 
+            IAppProjectService projectService, 
+            UserManager<AppUser> userManager,
+            IAppCompanyInfoService companyInfoService)
         {
             _context = context;
             _rolesService = rolesService;
@@ -33,6 +40,8 @@ namespace BugOut.Controllers
             _fileService = fileService;
             _projectService = projectService;
             _userManager = userManager;
+            _companyInfoService = companyInfoService;
+           
         }
 
         // GET: Projects
@@ -56,8 +65,43 @@ namespace BugOut.Controllers
         }
         #endregion
 
+        //GET: All Projects
+        #region All Projects
+        public async Task<IActionResult> AllProjects()
+        {
+
+
+            List<Project> projects = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+            {
+                projects = await _companyInfoService.GetAllProjectsAsync(companyId);
+            }
+            else
+            {
+                projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+            }
+
+            return View(projects);
+        }
+        #endregion
+
+        //GET: My Projects
+        #region Archived Projects
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = await _projectService.GetArchivedProjectsByCompany(companyId);
+
+            return View(projects);
+        }
+        #endregion
+
         // GET: Projects/Details/5
-        #region Create
+        #region Details
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Projects == null)
@@ -76,8 +120,9 @@ namespace BugOut.Controllers
 
             return View(project);
         }
-
+        #endregion
         // GET: Projects/Create
+        #region Create
         public async Task<IActionResult> Create()
         {
             int companyId = User.Identity.GetCompanyId().Value;

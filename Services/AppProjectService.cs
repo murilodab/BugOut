@@ -129,7 +129,7 @@ namespace BugOut.Services
 
         public async Task<List<Project>> GetAllProjectsByPriority(int companyId, string priorityName)
         {
-            List<Project> projects = await GetAllProjectsByCompany(companyId);
+            List<Project> projects = await GetAllProjectsByCompanyAsync(companyId);
 
             int priorityId = await LookupProjectPriorityId(priorityName);
 
@@ -138,9 +138,37 @@ namespace BugOut.Services
 
         public async Task<List<Project>> GetArchivedProjectsByCompany(int companyId)
         {
-            List<Project> projects = await GetAllProjectsByCompany(companyId);
+            try
+            {
+                List<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == true)
+                                                                   .Include(p => p.Members)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.Comments)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.Attachments)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.History)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.DeveloperUser)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.OwnerUser)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.Notifications)
+                                                                   .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.TicketStatus)
+                                                                    .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.TicketPriority)
+                                                                    .Include(p => p.Tickets)
+                                                                       .ThenInclude(p => p.TicketType)
+                                                                   .Include(p => p.ProjectPriority)
+                                                                   .ToListAsync();
+                return projects;
+            }
+            catch (Exception)
+            {
 
-            return projects.Where(p => p.Archived == true).ToList();
+                throw;
+            }
 
         }
 
@@ -201,7 +229,7 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
-        public async Task<List<Project>> GetAllProjectsByCompany(int companyId)
+        public async Task<List<Project>> GetAllProjectsByCompanyAsync(int companyId)
         {
             List<Project> projects = await _context.Projects.Where(p => p.CompanyId == companyId && p.Archived == false)
                                                             .Include(p => p.Members)
