@@ -20,6 +20,7 @@ namespace BugOut.Services
             _rolesService = roleService;
         }
 
+        #region Add New Project
         public async Task AddNewProjectAsync(Project project)
         {
             try
@@ -33,18 +34,20 @@ namespace BugOut.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Add Project Manager
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
             AppUser projectManager = await GetProjectManagerAsync(projectId);
 
-            if(projectManager != null)
+            if (projectManager != null)
             {
                 try
                 {
                     await RemoveProjectManagerAsync(projectId);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"**** ERROR **** - Failed to Remove the Current Project Manager. --> {ex.Message}");
                     return false;
@@ -56,21 +59,23 @@ namespace BugOut.Services
                 await AddUserToProjectAsync(userId, projectId);
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"**** ERROR **** - Failed to Add the New Project Manager. --> {ex.Message}");
                 return false;
             }
         }
+        #endregion
 
+        #region Add User To Project
         public async Task<bool> AddUserToProjectAsync(string userId, int projectId)
         {
             AppUser user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
-            if(user != null)
+            if (user != null)
             {
                 Project project = await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
-                if(!await IsUserOnProjectAsync(userId, projectId))
+                if (!await IsUserOnProjectAsync(userId, projectId))
                 {
                     try
                     {
@@ -92,7 +97,8 @@ namespace BugOut.Services
             {
                 return false;
             }
-        }
+        } 
+        #endregion
 
         public async Task ArchiveProjectAsync(Project project)
         {
@@ -177,16 +183,27 @@ namespace BugOut.Services
             throw new NotImplementedException();
         }
 
+        #region Get Project By Id
         public async Task<Project> GetProjectByIdAsync(int projectId, int companyId)
         {
             Project project = await _context.Projects
                                                     .Include(p => p.Tickets)
-                                                    .Include(p=> p.Members)
+                                                        .ThenInclude(t => t.TicketPriority)
+                                                    .Include(p => p.Tickets)
+                                                        .ThenInclude(t => t.TicketStatus)
+                                                    .Include(p => p.Tickets)
+                                                        .ThenInclude(t => t.TicketType)
+                                                    .Include(p => p.Tickets)
+                                                        .ThenInclude(t => t.DeveloperUser)
+                                                    .Include(p => p.Tickets)
+                                                        .ThenInclude(t => t.OwnerUser)
+                                                    .Include(p => p.Members)
                                                     .Include(p => p.ProjectPriority)
-                                                    .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);   
+                                                    .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
 
             return project;
-        }
+        } 
+        #endregion
 
         public async Task<AppUser> GetProjectManagerAsync(int projectId)
         {
