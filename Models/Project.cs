@@ -26,7 +26,7 @@ namespace BugOut.Models
 
         [DataType(DataType.Date)]
         [DisplayName("End Date")]
-        public DateTimeOffset? EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
 
         [DisplayName("Priority")]
