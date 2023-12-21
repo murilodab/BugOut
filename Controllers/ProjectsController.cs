@@ -123,6 +123,7 @@ namespace BugOut.Controllers
             return View(project);
         }
         #endregion
+
         #region Projects/Create
 
         public async Task<IActionResult> Create()
@@ -288,7 +289,7 @@ namespace BugOut.Controllers
         }
         #endregion
 
-        // GET: Projects/Delete/5
+        // GET: Projects/Restore/5
         #region Restore
         public async Task<IActionResult> Restore(int? id)
         {
@@ -310,7 +311,7 @@ namespace BugOut.Controllers
         }
         #endregion
 
-        // POST: Projects/Delete/5
+        // POST: Projects/RestoreConfirmed/5
         #region Restore Confirmed
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]

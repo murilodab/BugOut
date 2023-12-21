@@ -39,12 +39,11 @@ namespace BugOut.Services
             try
             {
                 ticket.Archived = true;
-                _context.Update(ticket);
-                await _context.SaveChangesAsync();
+                await UpdateTicketAsync(ticket);
             }
             catch (Exception)
             {
-
+                throw;
             }
 
         }
@@ -268,8 +267,13 @@ namespace BugOut.Services
         {
             try
             {
-                Ticket ticket = await _context.Tickets
-                        .FirstOrDefaultAsync(t => t.Id == ticketId);
+                Ticket ticket = await _context.Tickets.Include(t => t.DeveloperUser)
+                                                      .Include(t => t.OwnerUser)
+                                                      .Include(t => t.Project)
+                                                      .Include(t => t.TicketPriority)
+                                                      .Include(t => t.TicketStatus)
+                                                      .Include(t => t.TicketType)
+                                                      .FirstOrDefaultAsync(t => t.Id == ticketId);
 
                 return ticket;
             }
@@ -406,6 +410,20 @@ namespace BugOut.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public async Task RestoreTicketAsync(Ticket ticket)
+        {
+            try
+            {
+                ticket.Archived = false;
+                await UpdateTicketAsync(ticket);
+            }
+            catch (Exception)
+            {
+
                 throw;
             }
         }
