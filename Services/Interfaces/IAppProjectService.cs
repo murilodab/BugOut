@@ -19,6 +19,7 @@ namespace BugOut.Services.Interfaces
         public Task<List<AppUser>> GetSubmittersOnProjectAsync(int projectId);
         public Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int comopanyId);
         public Task<List<Project>>GetUserProjectsAsync(string userId);
+        public Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId);
         public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
         public Task<int> LookupProjectPriorityId(string priorityName);
         public Task RemoveProjectManagerAsync(int projectId);

@@ -55,6 +55,26 @@ namespace BugOut.Controllers
         }
         #endregion
 
+        #region All Tickets
+
+        public async Task<IActionResult> AllTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+
+            if(User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
+            {
+                return View(tickets.Where(t => t.Archived == false));
+            }
+            else
+            {
+                return View(tickets);
+            }
+        }
+
+        #endregion
+
         #region // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -154,7 +174,6 @@ namespace BugOut.Controllers
 
         #endregion
 
-
         #region // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -229,7 +248,6 @@ namespace BugOut.Controllers
 
         #endregion
 
-
         #region // GET: Tickets/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
@@ -262,7 +280,6 @@ namespace BugOut.Controllers
             return RedirectToAction(nameof(Index));
         }
         #endregion
-
 
         #region // GET: Tickets/Restore/5
         public async Task<IActionResult> Restore(int? id)
