@@ -173,7 +173,7 @@ namespace BugOut.Services
             }
         }
 
-        public async Task<List<TicketHistory>> GetProjectTicketHistoriesAsync(int projectId, int companyId)
+        public async Task<List<TicketHistory>> GetProjectTicketsHistoriesAsync(int projectId, int companyId)
         {
             try
             {

@@ -7,26 +7,41 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugOut.Data;
 using BugOut.Models;
+using Microsoft.AspNetCore.Identity;
+using BugOut.Extensions;
+using BugOut.Models.Enums;
+using BugOut.Services.Interfaces;
 
 namespace BugOut.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly IAppProjectService _projectService;
+        private readonly IAppLookupService _lookupService;
 
-        public TicketsController(ApplicationDbContext context)
+        public TicketsController(ApplicationDbContext context,
+                                UserManager<AppUser> userManager,
+                                IAppProjectService projectService,
+                                IAppLookupService lookupService)
         {
             _context = context;
+            _userManager = userManager;
+            _projectService = projectService;
+            _lookupService = lookupService;
         }
 
-        // GET: Tickets
+        #region // GET: Tickets
+
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(await applicationDbContext.ToListAsync());
         }
+        #endregion
 
-        // GET: Tickets/Details/5
+        #region // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Tickets == null)
@@ -50,18 +65,32 @@ namespace BugOut.Controllers
             return View(ticket);
         }
 
-        // GET: Tickets/Create
-        public IActionResult Create()
+        #endregion
+
+        #region // GET: Tickets/Create
+        public async Task<IActionResult> Create()
         {
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Id");
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Id");
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Id");
+            AppUser appUser = await _userManager.GetUserAsync(User);
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId), "Id", "Name");
+            }
+            else
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetUserProjectsAsync(appUser.Id), "Id", "Name");
+
+            }
+
+           
+            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
+
             return View();
         }
-
+        #endregion
         // POST: Tickets/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
