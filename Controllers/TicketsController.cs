@@ -255,6 +255,32 @@ namespace BugOut.Controllers
 
         #endregion
 
+        #region Add Ticket Comment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketComment([Bind("Id, TicketId, Comment")]TicketComment ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.Created = DateTimeOffset.Now;
+
+                    await _ticketService.AddTicketCommentAsyc(ticketComment);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+
+            return RedirectToAction("Details", new {id =  ticketComment.Id});
+        }
+
+        #endregion
+
         #region // GET: Tickets/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
