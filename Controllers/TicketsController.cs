@@ -22,18 +22,21 @@ namespace BugOut.Controllers
         private readonly IAppProjectService _projectService;
         private readonly IAppLookupService _lookupService;
         private readonly IAppTicketService _ticketService;
+        private readonly IAppFileService _fileService;
 
         public TicketsController(ApplicationDbContext context,
                                 UserManager<AppUser> userManager,
                                 IAppProjectService projectService,
                                 IAppLookupService lookupService,
-                                IAppTicketService ticketService)
+                                IAppTicketService ticketService,
+                                IAppFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _lookupService = lookupService;
             _ticketService = ticketService;
+            _fileService = fileService;
         }
 
         #region // GET: Tickets
@@ -347,8 +350,34 @@ namespace BugOut.Controllers
         }
         #endregion
 
+        #region // POST: Add Ticket Attachment
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketAttachment([Bind("Id,FormFile,Description,TicketId")] TicketAttachment ticketAttachment)
+        {
+            string statusMessage;
 
+            if (ModelState.IsValid && ticketAttachment.FormFile != null)
+            {
+                ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+
+                ticketAttachment.Created = DateTimeOffset.Now;
+                ticketAttachment.UserId = _userManager.GetUserId(User);
+
+                await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+                statusMessage = "Success: New attachment added to Ticket.";
+            }
+            else
+            {
+                statusMessage = "Error: Invalid data.";
+
+            }
+
+            return RedirectToAction("Details", new { id = ticketAttachment.TicketId, message = statusMessage });
+        }
 
         #region Ticket Exists
         private async Task<bool> TicketExists(int id)
