@@ -48,7 +48,7 @@ namespace BugOut.Services
 
         }
 
-        public async Task AddTicketCommentAsyc(TicketComment ticketComment)
+        public async Task AddTicketCommentAsync(TicketComment ticketComment)
         {
             try
             {

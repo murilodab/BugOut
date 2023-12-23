@@ -38,8 +38,6 @@
                                         var today = DateTime.Now;
                                         var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
                                     }
-
-
                                     <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
                                         <span class="progress-value">@percent%</span>
                                     </div>
@@ -82,7 +80,7 @@
                                         <div class="form-group">
                                             <textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add Comment..."></textarea>
                                         </div>
-                                        <button class="btn btn-sm btn-primary">Submit</button>
+                                        <button class="btn btn-sm btn-primary" type="submit">Submit</button>
                                     }
                                     else
                                     {

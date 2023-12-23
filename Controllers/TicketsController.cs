@@ -267,7 +267,7 @@ namespace BugOut.Controllers
                     ticketComment.UserId = _userManager.GetUserId(User);
                     ticketComment.Created = DateTimeOffset.Now;
 
-                    await _ticketService.AddTicketCommentAsyc(ticketComment);
+                    await _ticketService.AddTicketCommentAsync(ticketComment);
                 }
                 catch (Exception)
                 {
@@ -276,7 +276,7 @@ namespace BugOut.Controllers
                 }
             }
 
-            return RedirectToAction("Details", new {id =  ticketComment.Id});
+            return RedirectToAction("Details", new {id =  ticketComment.TicketId});
         }
 
         #endregion
