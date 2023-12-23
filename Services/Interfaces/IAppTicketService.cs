@@ -30,6 +30,7 @@ namespace BugOut.Services.Interfaces
 
         public Task RestoreTicketAsync(Ticket ticket);
         public Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
+        public Task<TicketAttachment> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
 
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BugOut.Services.Interfaces;
+using static Org.BouncyCastle.Crypto.Engines.SM2Engine;
 
 namespace BugOut.Services
 {
@@ -57,7 +58,7 @@ namespace BugOut.Services
             if (!string.IsNullOrWhiteSpace(file))
             {
                 fileImage = Path.GetExtension(file).Replace(".", "");
-                return $"/img/png{fileImage}.png";
+                return $"/img/contenttype/{fileImage}.png";
             }
             return fileImage;
         }
