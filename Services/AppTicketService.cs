@@ -2,7 +2,9 @@
 using BugOut.Models;
 using BugOut.Models.Enums;
 using BugOut.Services.Interfaces;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data;
 
 namespace BugOut.Services
@@ -485,6 +487,21 @@ namespace BugOut.Services
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
+        {
+            List<Ticket> tickets = new();
+
+            try
+            {
+                tickets =  (await GetAllTicketsByCompanyAsync(companyId)).Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).ToList();
+                return tickets;
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }
