@@ -114,7 +114,7 @@ namespace BugOut.Controllers
 
         #endregion
 
-        #region Assign PM
+        #region GET Assign PM
         public async Task<IActionResult> AssignPM(int projectId)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -128,6 +128,26 @@ namespace BugOut.Controllers
             return View(model);
 
         }
+        #endregion
+
+        #region POST Assign PM
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel model)
+        {
+            if (!string.IsNullOrEmpty(model.PMId))
+            {
+
+                await _projectService.AddProjectManagerAsync(model.PMId, model.Project.Id);
+
+                return RedirectToAction(nameof(Details), new { id = model.Project.Id });
+
+            }
+
+            return RedirectToAction(nameof(AssignPM), new {projectId =  model.Project.Id});
+        }
+
         #endregion
 
         // GET: Projects/Details/5
