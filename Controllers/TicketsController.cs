@@ -13,6 +13,7 @@ using BugOut.Models.Enums;
 using BugOut.Services.Interfaces;
 using System.ComponentModel.Design;
 using Microsoft.AspNetCore.Authorization;
+using BugOut.Models.ViewModels;
 
 namespace BugOut.Controllers
 {
@@ -121,6 +122,22 @@ namespace BugOut.Controllers
 
 
             return View(tickets);
+        }
+
+        #endregion
+
+        #region Assign Developer
+
+        [HttpGet]
+        public async Task<IActionResult> AssignDeveloper(int id)
+        {
+            AssignDeveloperViewModel model = new();
+
+            model.Ticket = await _ticketService.GetTicketByIdAsync(id);
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Developer)),
+                                                "Id", "FullName");
+
+            return View(model);
         }
 
         #endregion
