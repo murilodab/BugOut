@@ -26,11 +26,11 @@ namespace BugOut.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IAppCompanyInfoService _companyInfoService;
 
-        public ProjectsController(ApplicationDbContext context, 
-            IAppRolesService rolesService, 
-            IAppLookupService lookupService, 
-            IAppFileService fileService, 
-            IAppProjectService projectService, 
+        public ProjectsController(ApplicationDbContext context,
+            IAppRolesService rolesService,
+            IAppLookupService lookupService,
+            IAppFileService fileService,
+            IAppProjectService projectService,
             UserManager<AppUser> userManager,
             IAppCompanyInfoService companyInfoService)
         {
@@ -41,7 +41,7 @@ namespace BugOut.Controllers
             _projectService = projectService;
             _userManager = userManager;
             _companyInfoService = companyInfoService;
-           
+
         }
 
         // GET: Projects
@@ -75,7 +75,7 @@ namespace BugOut.Controllers
 
             int companyId = User.Identity.GetCompanyId().Value;
 
-            if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
             {
                 projects = await _companyInfoService.GetAllProjectsAsync(companyId);
             }
@@ -99,6 +99,34 @@ namespace BugOut.Controllers
             return View(projects);
         }
         #endregion
+
+        #region Unassigned Projects
+
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+            List<Project> projects = new();
+
+            projects = await _projectService.GetUnassignedProjectsAsync(companyId);
+
+            return View(projects);
+        }
+
+        #endregion
+
+        public async Task<IActionResult> AssignPM(int projectId)
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            AssignPMViewModel model = new();
+
+            model.Project = await _projectService.GetProjectByIdAsync(projectId, companyId);
+
+            model.PMList = new SelectList(await _rolesService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), companyId), "Id", "FullName");
+
+            return View(model);
+
+        }
 
         // GET: Projects/Details/5
         #region Details
@@ -138,7 +166,7 @@ namespace BugOut.Controllers
 
 
             return View(model);
-        } 
+        }
         #endregion
 
         // POST: Projects/Create
@@ -149,13 +177,13 @@ namespace BugOut.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
-          if(model != null)
+            if (model != null)
             {
                 int companyId = User.Identity.GetCompanyId().Value;
 
                 try
                 {
-                    if(model.Project.ImageFormFile != null)
+                    if (model.Project.ImageFormFile != null)
                     {
                         model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
                         model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
@@ -181,8 +209,8 @@ namespace BugOut.Controllers
                 //TODO: Redirect to All Projects
                 return RedirectToAction("Index");
             }
-             
-         
+
+
             return RedirectToAction("Create");
         }
         #endregion
@@ -329,7 +357,7 @@ namespace BugOut.Controllers
 
         private bool ProjectExists(int id)
         {
-          return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
