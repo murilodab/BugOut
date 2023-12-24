@@ -114,6 +114,7 @@ namespace BugOut.Controllers
 
         #endregion
 
+        #region Assign PM
         public async Task<IActionResult> AssignPM(int projectId)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -127,6 +128,7 @@ namespace BugOut.Controllers
             return View(model);
 
         }
+        #endregion
 
         // GET: Projects/Details/5
         #region Details
