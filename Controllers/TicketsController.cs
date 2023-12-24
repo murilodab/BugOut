@@ -126,7 +126,7 @@ namespace BugOut.Controllers
 
         #endregion
 
-        #region Assign Developer
+        #region GET Assign Developer
 
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int id)
