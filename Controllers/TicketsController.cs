@@ -142,6 +142,21 @@ namespace BugOut.Controllers
 
         #endregion
 
+        #region POST Assign Developer
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if(model.DeveloperId != null)
+            {
+                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+            }
+
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket.Id });
+        }
+
+        #endregion
 
         #region // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
