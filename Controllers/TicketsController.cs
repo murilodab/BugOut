@@ -25,13 +25,14 @@ namespace BugOut.Controllers
         private readonly IAppLookupService _lookupService;
         private readonly IAppTicketService _ticketService;
         private readonly IAppFileService _fileService;
-
+        private readonly IAppTicketHistoryService _historyService;
         public TicketsController(ApplicationDbContext context,
                                 UserManager<AppUser> userManager,
                                 IAppProjectService projectService,
                                 IAppLookupService lookupService,
                                 IAppTicketService ticketService,
-                                IAppFileService fileService)
+                                IAppFileService fileService,
+                                IAppTicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
@@ -39,6 +40,7 @@ namespace BugOut.Controllers
             _lookupService = lookupService;
             _ticketService = ticketService;
             _fileService = fileService;
+            _historyService = historyService;
         }
 
         #region // GET: Tickets
@@ -68,7 +70,7 @@ namespace BugOut.Controllers
 
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
-            if(User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
+            if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
             {
                 return View(tickets.Where(t => t.Archived == false));
             }
@@ -109,10 +111,11 @@ namespace BugOut.Controllers
             else
             {
                 List<Ticket> pmTickets = new();
-                foreach(Ticket ticket in tickets)
+                foreach (Ticket ticket in tickets)
                 {
-                    if(await _projectService.IsAssignedProjectManagerAsync(appUserId, ticket.ProjectId)){
-                        
+                    if (await _projectService.IsAssignedProjectManagerAsync(appUserId, ticket.ProjectId))
+                    {
+
                         pmTickets.Add(ticket);
                     }
                 }
@@ -148,7 +151,7 @@ namespace BugOut.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
         {
-            if(model.DeveloperId != null)
+            if (model.DeveloperId != null)
             {
                 await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
             }
@@ -166,7 +169,7 @@ namespace BugOut.Controllers
                 return NotFound();
             }
 
-           Ticket ticket =  await _ticketService.GetTicketByIdAsync(id.Value);
+            Ticket ticket = await _ticketService.GetTicketByIdAsync(id.Value);
 
             if (ticket == null)
             {
@@ -211,10 +214,10 @@ namespace BugOut.Controllers
         public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
             AppUser appUser = await _userManager.GetUserAsync(User);
-            
+
             if (ModelState.IsValid)
             {
-                
+
 
 
                 ticket.Created = DateTimeOffset.Now;
@@ -272,7 +275,7 @@ namespace BugOut.Controllers
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
             ViewData["TicketStatusId"] = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
             ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
-           
+
             return View(ticket);
         }
 
@@ -293,6 +296,7 @@ namespace BugOut.Controllers
             if (ModelState.IsValid)
             {
                 AppUser appUser = await _userManager.GetUserAsync(User);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
 
 
                 try
@@ -313,7 +317,9 @@ namespace BugOut.Controllers
                 }
 
                 //TODO: Add Ticket History
-                return RedirectToAction(nameof(Index));
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, appUser.Id);
+                return RedirectToAction(nameof(AllTickets));
             }
 
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
@@ -328,7 +334,7 @@ namespace BugOut.Controllers
         #region Add Ticket Comment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddTicketComment([Bind("Id, TicketId, Comment")]TicketComment ticketComment)
+        public async Task<IActionResult> AddTicketComment([Bind("Id, TicketId, Comment")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
             {
@@ -346,7 +352,7 @@ namespace BugOut.Controllers
                 }
             }
 
-            return RedirectToAction("Details", new {id =  ticketComment.TicketId});
+            return RedirectToAction("Details", new { id = ticketComment.TicketId });
         }
 
         #endregion
@@ -379,7 +385,7 @@ namespace BugOut.Controllers
             Ticket ticket = await _ticketService.GetTicketByIdAsync(id);
 
             await _ticketService.ArchiveTicketAsync(ticket);
-           
+
             return RedirectToAction(nameof(Index));
         }
         #endregion
