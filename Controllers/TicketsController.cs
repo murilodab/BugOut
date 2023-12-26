@@ -17,6 +17,7 @@ using BugOut.Models.ViewModels;
 
 namespace BugOut.Controllers
 {
+    [Authorize]
     public class TicketsController : Controller
     {
        
@@ -89,7 +90,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region Unassigned Tickets
-        [Authorize(Roles = "Admin, ProjectManager")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> UnassignedTickets()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -123,7 +124,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region GET Assign Developer
-
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpGet]
         public async Task<IActionResult> AssignDeveloper(int id)
         {
@@ -139,7 +140,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region POST Assign Developer
-
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
@@ -380,6 +381,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region // GET: Tickets/Archive/5
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -399,6 +401,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region // POST: Tickets/ArchiveConfirmed/5
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -413,6 +416,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region // GET: Tickets/Restore/5
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id == null)
@@ -432,6 +436,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region // POST: Tickets/RestoreConfirmed/5
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
