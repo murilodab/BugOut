@@ -14,20 +14,23 @@ using BugOut.Models.Enums;
 using Org.BouncyCastle.Bcpg;
 using Microsoft.AspNetCore.Identity;
 using Org.BouncyCastle.Asn1.Cms;
+using System.Net.Sockets;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugOut.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly IAppLookupService _lookupService;
-        private readonly ApplicationDbContext _context;
+        
         private readonly IAppRolesService _rolesService;
         private readonly IAppFileService _fileService;
         private readonly IAppProjectService _projectService;
         private readonly UserManager<AppUser> _userManager;
         private readonly IAppCompanyInfoService _companyInfoService;
 
-        public ProjectsController(ApplicationDbContext context,
+        public ProjectsController(
             IAppRolesService rolesService,
             IAppLookupService lookupService,
             IAppFileService fileService,
@@ -35,7 +38,7 @@ namespace BugOut.Controllers
             UserManager<AppUser> userManager,
             IAppCompanyInfoService companyInfoService)
         {
-            _context = context;
+            
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -45,14 +48,6 @@ namespace BugOut.Controllers
 
         }
 
-        // GET: Projects
-        #region Index
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
-            return View(await applicationDbContext.ToListAsync());
-        }
-        #endregion
 
         //GET: My Projects
         #region My Projects
@@ -102,7 +97,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region Unassigned Projects
-
+        [Authorize(Roles = $"{nameof(Roles.Admin)}")]
         public async Task<IActionResult> UnassignedProjects()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -116,6 +111,8 @@ namespace BugOut.Controllers
         #endregion
 
         #region GET Assign PM
+        [Authorize(Roles = nameof(Roles.Admin))]
+        [HttpGet]
         public async Task<IActionResult> AssignPM(int projectId)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -133,6 +130,7 @@ namespace BugOut.Controllers
 
         #region POST Assign PM
 
+        [Authorize(Roles = $"{nameof(Roles.Admin)}")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
@@ -153,6 +151,7 @@ namespace BugOut.Controllers
 
         #region GET Assign Members
 
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpGet]
         public async Task<IActionResult> AssignMembers(int id)
         {
@@ -176,7 +175,7 @@ namespace BugOut.Controllers
         #endregion
 
         #region POST Assign Members
-
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
@@ -211,7 +210,7 @@ namespace BugOut.Controllers
         #region Details
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Projects == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -233,6 +232,7 @@ namespace BugOut.Controllers
 
         #region Projects/Create
 
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> Create()
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -252,6 +252,7 @@ namespace BugOut.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         #region Create
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
@@ -295,7 +296,9 @@ namespace BugOut.Controllers
         #endregion
 
         // GET: Projects/Edit/5
+
         #region Edit
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> Edit(int? id)
         {
             int companyId = User.Identity.GetCompanyId().Value;
@@ -317,6 +320,7 @@ namespace BugOut.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         #region Edit
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
@@ -343,10 +347,16 @@ namespace BugOut.Controllers
                         await _projectService.AddProjectManagerAsync(model.PMId, model.Project.Id);
                     }
                 }
-                catch (Exception)
+                catch (DbUpdateConcurrencyException)
                 {
-
-                    throw;
+                    if (!await ProjectExists(model.Project.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
 
                 //TODO: Redirect to All Projects
@@ -360,6 +370,7 @@ namespace BugOut.Controllers
 
         // GET: Projects/Delete/5
         #region Archive
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> Archive(int? id)
         {
             if (id == null)
@@ -382,6 +393,7 @@ namespace BugOut.Controllers
 
         // POST: Projects/Delete/5
         #region Archive Confirmed
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
@@ -398,6 +410,7 @@ namespace BugOut.Controllers
 
         // GET: Projects/Restore/5
         #region Restore
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id == null)
@@ -420,6 +433,7 @@ namespace BugOut.Controllers
 
         // POST: Projects/RestoreConfirmed/5
         #region Restore Confirmed
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)} ")]
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
@@ -434,9 +448,11 @@ namespace BugOut.Controllers
         }
         #endregion
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExists(int id)
         {
-            return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            return (await _projectService.GetAllProjectsByCompanyAsync(companyId)).Any(t => t.Id == id);
         }
     }
 }

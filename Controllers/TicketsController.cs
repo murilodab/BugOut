@@ -19,14 +19,14 @@ namespace BugOut.Controllers
 {
     public class TicketsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+       
         private readonly UserManager<AppUser> _userManager;
         private readonly IAppProjectService _projectService;
         private readonly IAppLookupService _lookupService;
         private readonly IAppTicketService _ticketService;
         private readonly IAppFileService _fileService;
         private readonly IAppTicketHistoryService _historyService;
-        public TicketsController(ApplicationDbContext context,
+        public TicketsController(
                                 UserManager<AppUser> userManager,
                                 IAppProjectService projectService,
                                 IAppLookupService lookupService,
@@ -34,7 +34,7 @@ namespace BugOut.Controllers
                                 IAppFileService fileService,
                                 IAppTicketHistoryService historyService)
         {
-            _context = context;
+          
             _userManager = userManager;
             _projectService = projectService;
             _lookupService = lookupService;
@@ -43,14 +43,7 @@ namespace BugOut.Controllers
             _historyService = historyService;
         }
 
-        #region // GET: Tickets
-
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(await applicationDbContext.ToListAsync());
-        }
-        #endregion
+       
 
         #region My Tickets
         public async Task<IActionResult> MyTickets()
@@ -181,7 +174,7 @@ namespace BugOut.Controllers
         #region // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -370,6 +363,9 @@ namespace BugOut.Controllers
                     ticketComment.Created = DateTimeOffset.Now;
 
                     await _ticketService.AddTicketCommentAsync(ticketComment);
+
+                    //Add History
+                    await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
                 }
                 catch (Exception)
                 {
@@ -468,6 +464,7 @@ namespace BugOut.Controllers
 
                 await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
                 statusMessage = "Success: New attachment added to Ticket.";
+                await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
             }
             else
             {
