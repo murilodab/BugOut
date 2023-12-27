@@ -411,7 +411,7 @@ namespace BugOut.Controllers
 
             await _ticketService.ArchiveTicketAsync(ticket);
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(ArchivedTickets));
         }
         #endregion
 

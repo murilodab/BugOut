@@ -1,5 +1,7 @@
 ﻿using BugOut.Extensions;
 using BugOut.Models;
+using BugOut.Models.ChartModels;
+using BugOut.Models.Enums;
 using BugOut.Models.ViewModels;
 using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -20,7 +22,7 @@ namespace BugOut.Controllers
         {
             _logger = logger;
             _companyInfoService = companyInfoService;
-            
+            _projectService = projectService;
         }
 
         public async Task<IActionResult> Dashboard()
@@ -52,5 +54,72 @@ namespace BugOut.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpPost]
+        public async Task<JsonResult> GglProjectTickets()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+
+            List<object> chartData = new();
+            chartData.Add(new object[] { "ProjectName", "TicketCount" });
+
+            foreach (Project prj in projects)
+            {
+                chartData.Add(new object[] { prj.Name, prj.Tickets.Where(t => t.Archived == false).Count() });
+            }
+
+            return Json(chartData);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GglProjectPriority()
+        {
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+
+            List<object> chartData = new();
+            chartData.Add(new object[] { "Priority", "Count" });
+
+
+            foreach (string priority in Enum.GetNames(typeof(AppProjectPriority)))
+            {
+                int priorityCount = (await _projectService.GetAllProjectsByPriority(companyId, priority)).Where(p=>p.Archived==false).Count();
+                chartData.Add(new object[] { priority, priorityCount });
+            }
+
+            return Json(chartData);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AmCharts()
+        {
+
+            AmChartData amChartData = new();
+            List<AmItem> amItems = new();
+
+            int companyId = User.Identity.GetCompanyId().Value;
+
+            List<Project> projects = (await _companyInfoService.GetAllProjectsAsync(companyId)).Where(p => p.Archived == false).ToList();
+
+            foreach (Project project in projects)
+            {
+                AmItem item = new();
+
+                item.Project = project.Name;
+                item.Tickets = project.Tickets.Where(t => t.Archived == false).Count();
+                item.Developers = (await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer))).Count();
+
+                amItems.Add(item);
+            }
+
+            amChartData.Data = amItems.ToArray();
+
+
+            return Json(amChartData.Data);
+        }
+
     }
 }
