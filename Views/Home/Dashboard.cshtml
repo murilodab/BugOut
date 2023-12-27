@@ -156,14 +156,14 @@
                                                 </td>
                                                 @if (ticket.TicketStatus.Name == "New")
                                                 {
-                                                    <td><span class="badge-success rounded-pill">@ticket.TicketStatus.Name </span></td>
+                                                    <td><span class="badge bg-success rounded-pill">@ticket.TicketStatus.Name </span></td>
 
                                                 }
                                                 else
                                                 {
-                                                    <td><span class="badge-primary rounded-pill">@ticket.TicketStatus.Name </span></td>
+                                                    <td><span class="badge bg-primary rounded-pill">@ticket.TicketStatus.Name </span></td>
                                                 }
-                                                <td><span class="badge- bg-dark">@ticket.TicketPriority.Name </span></td>
+                                                <td><span class="badge bg-dark">@ticket.TicketPriority.Name </span></td>
                                                 <td><span style="font-size:small;">@ticket.Created.ToString("MM-dd-yyyy")</span></td>
                                                 <td>
                                                     <a class="btn btn-sm btn-outline-info-secondary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
