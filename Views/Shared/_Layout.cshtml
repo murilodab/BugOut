@@ -15,93 +15,144 @@
     <link href="/css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
-<body >
-    <div class="container-fluid overflow-hidden">
-        <div class="row vh-100 overflow-auto">
-            <div class="col-12 col-sm-3 col-xl-2 px-sm-2 px-0 bg-dark d-flex sticky-top">
-                <div class="d-flex flex-sm-column flex-row flex-grow-1 align-items-center align-items-sm-start px-3 pt-2 text-white">
-                    <a href="/" class="d-flex align-items-center pb-sm-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                        <span class="fs-5"><span class="d-none d-sm-inline">BugTracker</span></span>
-                    </a>
-                    <partial name="_LoginPartial" />
 
-                    @if (SignInManager.IsSignedIn(User))
-                    {
-                        <ul class="nav nav-pills flex-sm-column flex-row flex-nowrap flex-shrink-1 flex-sm-grow-0 flex-grow-1 mb-sm-auto mb-0 justify-content-center align-items-center align-items-sm-start" id="menu">
-                            <li class="nav-item">
-                                <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-house"></i><span class="ms-1 d-none d-sm-inline">Home</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Companies" asp-action="Index" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-building"></i><span class="ms-1 d-none d-sm-inline">Company</span>
-                                </a>
-                            </li>
-                            <li class="dropdown">
-                                <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fs-5 bi-file-earmark-ppt"></i><span class="ms-1 d-none d-sm-inline">Projects</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
+
+
+<body class="sb-nav-fixed" style="overflow-x: hidden;">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <!-- Navbar Brand-->
+        <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="navbar-brand ps-3">BugOut Logo</a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <!-- Navbar Search-->
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
+            </div>
+        </form>
+        <!-- Navbar-->
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="#!">Settings</a></li>
+                    <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item" href="#!">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+
+                            <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="nav-link">
+                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                                Dashboard
+                            </a>
+
+
+                            <a asp-area="" asp-controller="Companies" asp-action="Index" class="nav-link">
+                                <div class="sb-nav-link-icon"><i class="fs-5 bi-building"></i></div>
+                                Company
+                            </a>
+
+
+                            <a asp-area="" asp-controller="Projects" asp-action="AllProjects" class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseProjects" aria-expanded="false" aria-controls="collapseProjects">
+                                <div class="sb-nav-link-icon"><i class="fs-5 bi-file-earmark-ppt"></i></div>
+                                Projects
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseProjects" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
                                     @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                                     {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="Create">New project...</a></li>
+                                        <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="Create">New project...</a>
 
                                     }
 
                                     @if (!User.IsInRole(nameof(Roles.Admin)))
                                     {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="MyProjects">My Projects</a></li>
+                                        <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="MyProjects">My Projects</a>
+
                                     }
 
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="AllProjects">All Projects</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a></li>
+                                    <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="AllProjects">All Projects</a>
+
+                                    <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a>
                                     @if (User.IsInRole(nameof(Roles.Admin)))
                                     {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Projects" asp-action="UnassignedProjects">Unassigned Projects</a></li>
+                                        <a class="nav-link" asp-area="" asp-controller="Projects" asp-action="UnassignedProjects">Unassigned Projects</a>
 
                                     }
-                                </ul>
-                            </li>
-                            <li class="dropdown">
-                                <a asp-area="" asp-controller="Tickets" asp-action="AllTickets" class="nav-link dropdown-toggle px-sm-0 px-2" id="dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fs-5 bi-file-earmark-font"></i><span class="ms-1 d-none d-sm-inline">Tickets</span>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdown">
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a></li>
+                                </nav>
+
+
+                            </div>
+
+
+
+                            <a asp-area="" asp-controller="Tickets" asp-action="AllTickets" class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTickets" aria-expanded="false" aria-controls="collapseTickets">
+
+                                <div class="sb-nav-link-icon"><i class="fs-5 bi-file-earmark-font"></i></div>
+                                Tickets
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseTickets" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="Create">New ticket...</a>
 
                                     @if (!User.IsInRole(nameof(Roles.Admin)))
                                     {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a></li>
+                                        <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a>
                                     }
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a></li>
-                                    <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a></li>
+                                    <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a>
+                                    <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a>
                                     @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                                     {
-                                        <li><a class="dropdown-item" asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a></li>
+                                        <a class="nav-link" asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a>
                                     }
+                                </nav>
+                            </div>
 
-                                </ul>
-                            </li>
-                            <li>
-                                <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link px-sm-0 px-2">
-                                    <i class="fs-5 bi-mailbox2"></i><span class="ms-1 d-none d-sm-inline">Notifications</span>
-                                </a>
-                            </li>
-                        </ul>
-                    }
-                </div>
-            </div>
-            <div class="col d-flex flex-column h-100">
-                <main class="row">
-                    @RenderBody()
-                </main>
-                <footer class="row bg-light py-4 mt-auto">
-                    <div class="container">
-                        &copy; 2021 - TheBugTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+                            <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link">
+                                <div class="sb-nav-link-icon"><i class="fs-5 bi-mailbox2"></i></div>
+                                Notifications
+                            </a>
+                        }
                     </div>
-                </footer>
-            </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    <partial name="_LoginPartial" />
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                @RenderBody()
+            </main>
+
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">
+                            &copy; 2021 - TheBugTracker -
+                        </div>
+                        <div>
+                            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </div>
+
+                    </div>
+                </div>
+            </footer>
         </div>
     </div>
 
