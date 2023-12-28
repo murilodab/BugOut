@@ -13,103 +13,96 @@
     string DemoUserPassword = "Abc&123!";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col">
-        <section>
-            <div class="bg-dark" id="layoutAuthentication">
-                <div id="layoutAuthentication_content" class="d-flex align-items-center">
-                    <div class="container-fluid">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-5">
-
-                                <div class="card shadow-lg mt-5" style="border-radius:20px">
-
-
-                                    <div class="card-body p-5">
-                                        <row>
-                                            <div class="text-center">
-                                                <img class="mt-4 img-fluid" src="~/assets/img/Bug_out.svg" width="300" />
-                                            </div>
-                                        </row>
-                                        <row>
-                                            <div class="text-center"><a href="https://murilobarbosa.dev/"><small>murilobarbosa.dev</small></a></div>
-                                        </row>
-                                        <h2>Use a Demo account to log in.</h2>
-                                        <form id="account" method="post">
-                                            <hr />
-                                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Email" class="form-control" value="@DemoAdminUserName" hidden />
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
-                                            </div>
-                                            <div>
-                                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Admin</button>
-                                            </div>
-                                        </form>
-
-                                        <form id="account" method="post">
-
-                                            <hr />
-                                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Email" class="form-control" value="@DemoProjectManagerUserName" hidden />
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
-                                            </div>
-                                            <div>
-                                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Project Manager</button>
-                                            </div>
-                                        </form>
-
-                                        <form id="account" method="post">
-
-                                            <hr />
-                                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Email" class="form-control" value="@DemoDeveloperUserName" hidden />
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
-                                            </div>
-                                            <div>
-                                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Developer</button>
-                                            </div>
-                                        </form>
-
-                                        <form id="account" method="post">
-
-                                            <hr />
-                                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Email" class="form-control" value="@DemoSubmitterUserName" hidden />
-                                            </div>
-                                            <div class="form-floating mb-3">
-                                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
-                                            </div>
-                                            <div>
-                                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Submitter</button>
-                                            </div>
-                                        </form>
-
-
-                                        <div>
-                                            <p>
-                                                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Login with Your Account</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+<div class="bg-dark" id="layoutAuthentication">
+    <div id="layoutAuthentication_content" class="d-flex align-items-center justify-content-center">
+        <div class="row d-flex">
+            <div class="col">
+                <div class="card shadow-lg m-5" style="border-radius:20px">
+                    <div class="card-body p-5">
+                        <row>
+                            <div class="text-center">
+                                <img class="mt-4 img-fluid" src="~/assets/img/Bug_out.svg" width="300" />
                             </div>
+                        </row>
+                        <row>
+                            <div class="text-center"><a href="https://murilobarbosa.dev/"><small>murilobarbosa.dev</small></a></div>
+                        </row>
+                        <h2>Use a Demo account to log in.</h2>
+                        <form id="account" method="post">
+
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" value="@DemoAdminUserName" hidden />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
+                            </div>
+                            <div>
+                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Admin</button>
+                            </div>
+                        </form>
+
+                        <form id="account" method="post">
+
+                            <hr />
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" value="@DemoProjectManagerUserName" hidden />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
+                            </div>
+                            <div>
+                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Project Manager</button>
+                            </div>
+                        </form>
+
+                        <form id="account" method="post">
+
+                            <hr />
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" value="@DemoDeveloperUserName" hidden />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
+                            </div>
+                            <div>
+                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Developer</button>
+                            </div>
+                        </form>
+
+                        <form id="account" method="post">
+
+                            <hr />
+                            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Email" class="form-control" value="@DemoSubmitterUserName" hidden />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input asp-for="Input.Password" class="form-control" value="@DemoUserPassword" hidden />
+                            </div>
+                            <div>
+                                <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Submitter</button>
+                            </div>
+                            <hr />
+                        </form>
+
+
+                        <div class="text-center">
+                            Or
+                            <p>
+                                <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Login with Your Account</a>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
+</div>
+
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
