@@ -109,54 +109,56 @@
             </a>
         </div>
     </div>
-
-    <div class="row h-100">
-
-        <div class="col-xl-3">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Projects by Priority</h5>
-                </div>
-                <div class="card-body">
-                    <div id="chart3D"></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Project Tickets Count (%)</h5>
-                </div>
-                <div class="card-body">
-                    <div id="donut"></div>
+    <div class="container-fluid">
+        <div class="row d-flex mt-4">
+            @* chart 01 *@
+            <div class="col-xl-3">
+                <div class="card mb-4 h-100 overflow-hidden">
+                    <div class="card-header" >
+                        <h5>Projects by Priority</h5>
+                    </div>
+                    <div class="card-body d-flex justify-content-center " >
+                        <div id="chart3D" class="d-flex align-self-center"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xl-3">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Tickets by Priority</h5>
-                    <div class="card-body">
+            @* chart 02 *@
+            <div class="col-xl-3">
+                <div class="card mb-4 h-100 overflow-hidden">
+                    <div class="card-header">
+                        <h5>Project Tickets Count (%)</h5>
+                    </div>
+                    <div class="card-body d-flex justify-content-center">
+                        <div id="donut" class="d-flex align-self-center"></div>
+                    </div>
+                </div>
+            </div>
+            @* chart 3 *@
+            <div class="col-xl-3">
+                <div class="card mb-4 h-100">
+                    <div class="card-header">
+                        <h5>Tickets by Priority</h5>
+                    </div>
+                    <div class="card-body d-flex  justify-content-center">
                         <canvas id="pieChart"></canvas>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-xl-3">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Tickets by Status</h5>
-                    <div class="card-body">                    
+            @* chart 4 *@
+            <div class="col-xl-3">
+                <div class="card mb-4 h-100">
+                    <div class="card-header">
+                        <h5>Tickets by Status</h5>
+                    </div>
+                    <div class="card-body d-flex justify-content-center">
                         <canvas id="donutChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    
+    @*  chart 5 *@
     <div class="row gy-2">
         <div class="cols mt-5 bg-secondary">
             <div class="card col m-1 p-2">
@@ -324,10 +326,11 @@
 
                     //3D Pie
                     var options = {
-                        title: 'Project Priority',
                         is3D: true,
                         chartArea: { left: 0, bottom: 15, width: '100%', height: '100%' },
-                        legend: { position: 'bottom' }
+
+                        legend: { position: 'bottom', alignment: 'center' },
+                        width: 350
 
                     };
 
@@ -358,10 +361,11 @@
 
                     //Donut
                     var options = {
-                        title: 'Company Ticket Distribution',
-                        pieHole: 0.3,
-                        chartArea: { left: 0, bottom: 15, width: '100%', height: '100%' },
-                        legend: { position: 'bottom' }
+                        pieHole: 0.5,
+                        chartArea: {left:0, bottom: 15, width: '100%', height: '100%' },
+
+                        legend: { position: 'bottom', alignment:'center' },
+                        width: 350
                     };
                     var chart = new google.visualization.PieChart($("#donut")[0]);
                     chart.draw(data, options);
@@ -395,7 +399,7 @@
         @Model.Tickets.Where(t => t.TicketPriority.Name == nameof(AppTicketPriority.High) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketPriority.Name == nameof(AppTicketPriority.Urgent) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketPriority.Name == nameof(AppTicketPriority.Low) && t.Archived == false).Count()
-                                                                                                                ],
+                                                                                                                                ],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -413,7 +417,7 @@
         };
 
         var pieOptions = {
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
             responsive: true,
         };
         //Create pie or douhnut chart
@@ -444,7 +448,7 @@
         @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(AppTicketStatus.New) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(AppTicketStatus.Resolved) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(AppTicketStatus.Testing) && t.Archived == false).Count()
-                                                                                                        ],
+                                                                                                                        ],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -462,7 +466,7 @@
         };
 
         var donutOptions = {
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
             responsive: true,
         };
         //Create pie or douhnut chart
