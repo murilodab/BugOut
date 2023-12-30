@@ -510,9 +510,12 @@
                     // Create chart instance
                     var chart = am4core.create("chartdiv", am4charts.XYChart);
 
+                    
 
                     // Add data
                     chart.data = result;
+
+                    chart.paddingLeft = 0;
 
                     // Create axes
                     var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
@@ -525,6 +528,8 @@
 
                     var valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
                     valueAxis.renderer.opposite = true;
+                  
+
 
                     // Create series
                     function createSeries(field, name) {
@@ -535,13 +540,14 @@
                         series.columns.template.tooltipText = "{name}: [bold]{valueX}[/]";
                         series.columns.template.height = am4core.percent(100);
                         series.sequencedInterpolation = true;
+                       
 
                         var valueLabel = series.bullets.push(new am4charts.LabelBullet());
                         valueLabel.label.text = "{valueX}";
                         valueLabel.label.horizontalCenter = "left";
                         valueLabel.label.dx = 10;
-                        valueLabel.label.hideOversized = false;
-                        valueLabel.label.truncate = false;
+                        valueLabel.label.hideOversized = true;
+                        valueLabel.label.truncate = true;
 
                         var categoryLabel = series.bullets.push(new am4charts.LabelBullet());
                         categoryLabel.label.text = "{name}";
