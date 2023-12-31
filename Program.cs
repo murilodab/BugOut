@@ -1,4 +1,5 @@
 using BugOut.Data;
+using BugOut.Helpers;
 using BugOut.Models;
 using BugOut.Services;
 using BugOut.Services.Factories;
@@ -55,6 +56,10 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 await DataUtility.ManageDataAsync(app);
+
+var scope = app.Services.CreateScope();
+
+await DataHelper.ManageDataAsync(scope.ServiceProvider);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
