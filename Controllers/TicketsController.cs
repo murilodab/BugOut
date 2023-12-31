@@ -362,6 +362,7 @@ namespace BugOut.Controllers
                 {
                     ticketComment.UserId = _userManager.GetUserId(User);
                     ticketComment.Created = DateTimeOffset.Now;
+                    ticketComment.User = await _userManager.GetUserAsync(User);
 
                     await _ticketService.AddTicketCommentAsync(ticketComment);
 
