@@ -165,10 +165,10 @@
     @*  chart 5 *@
     <div class="row mt-4">
         <div class="col">
-            <div class="card overflow-scroll" style="height:300px;width:auto;" >
-                 <div class="card-header w-100">
+            <div class="card overflow-scroll" style="height:300px;width:auto;">
+                <div class="card-header w-100">
                     <h5>Tickets vs Developers</h5>
-                     </div>
+                </div>
                 <div class="card-body" style="height:700px;">
                     <!-- HTML -->
                     <div id="chartdiv" style="width:100vw;"></div>
@@ -182,109 +182,130 @@
         <div class="row">
 
             <div class="col">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="card-header">
-                            <h2>Projects</h2>
-                        </div>
-                        <div class="card-body">
 
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                <table class="table table-hover">
-                                    <thead class="">
-                                        <tr>
-                                            @* Table header *@
-                                            <th>Name</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Priority</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                <div class="card m-1 p-2">
+                    <div class="card-header">
+                        <h2>Projects</h2>
+                    </div>
+                    <div class="card-body">
 
-                                        @foreach (var project in Model.Projects.OrderByDescending(d => d.EndDate))
-                                        {
-                                            <tr>
-                                                <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:black;"><strong>@project.Name</strong></a></td>
-                                                <td><span style="font-size:small;">@project.StartDate.ToString("MM.dd.yyyy")</span></td>
-                                                <td><span style="font-size:small;">@project.EndDate.ToString("MM.dd.yyyy")</span></td>
-                                                <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
-                                                <td><a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Project" asp-route-id="@project.Id"><i class="fs-5 bi-justify"></i></a></td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                        </div>
+                        @* <div class="table-responsive" style="overflow-y:auto;height:600px;"> *@
+                        <table class="table table-hover" id="datatablesSimple">
+                            <thead class="">
+                                <tr>
+                                    @* Table header *@
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Priority</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tfoot class="">
+                                <tr>
+                                    @* Table footer *@
+                                    <th>Name</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Priority</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+
+                            <tbody>
+
+                                @foreach (var project in Model.Projects.OrderByDescending(d => d.EndDate))
+                                {
+                                    <tr>
+                                        <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:black;"><strong>@project.Name</strong></a></td>
+                                        <td><span style="font-size:small;">@project.StartDate.ToString("MM.dd.yyyy")</span></td>
+                                        <td><span style="font-size:small;">@project.EndDate.ToString("MM.dd.yyyy")</span></td>
+                                        <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
+                                        <td><a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Project" asp-route-id="@project.Id"><i class="fs-5 bi-justify"></i></a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @* </div> *@
                     </div>
                 </div>
+
             </div>
 
             <div class="col">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="card-header">
-                            <h2>Tickets</h2>
-                        </div>
-                        <div class="card-body">
 
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                <table class="table table-hover">
-                                    <thead class="">
-                                        <tr>
-
-                                            <th>Title</th>
-                                            <th>Developer</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-
-                                        @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
-                                        {
-                                            <tr>
-                                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
-                                                <td>
-                                                    @if (ticket.DeveloperUserId != null)
-                                                    {
-                                                        @ticket.DeveloperUser?.FullName
-                                                    }
-                                                    else
-                                                    {
-
-                                                        <span class="badge bg-warning text-dark">Unassigned</span>
-                                                    }
-                                                </td>
-                                                @if (ticket.TicketStatus.Name == "New")
-                                                {
-                                                    <td><span class="badge bg-success rounded-pill">@ticket.TicketStatus.Name </span></td>
-
-                                                }
-                                                else
-                                                {
-                                                    <td><span class="badge bg-primary rounded-pill">@ticket.TicketStatus.Name </span></td>
-                                                }
-                                                <td><span class="badge bg-dark">@ticket.TicketPriority.Name </span></td>
-                                                <td><span style="font-size:small;">@ticket.Created.ToString("MM-dd-yyyy")</span></td>
-                                                <td>
-                                                    <a class="btn btn-sm btn-outline-info-secondary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                        </div>
+                <div class="card m-1 p-2">
+                    <div class="card-header">
+                        <h2>Tickets</h2>
                     </div>
+                    <div class="card-body">
+
+                        @* <div class="table-responsive" style="overflow-y:auto;height:600px;"> *@
+                        <table class="table table-hover" id="datatablesSimpleTickets">
+                            <thead class="">
+                                <tr>
+
+                                    <th>Title</th>
+                                    <th>Developer</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tfoot class="">
+                                <tr>
+
+                                    <th>Title</th>
+                                    <th>Developer</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </tfoot>
+                            <tbody>
+
+                                @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
+                                {
+                                    <tr>
+                                        <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
+                                        <td>
+                                            @if (ticket.DeveloperUserId != null)
+                                            {
+                                                @ticket.DeveloperUser?.FullName
+                                            }
+                                            else
+                                            {
+
+                                                <span class="badge bg-warning text-dark">Unassigned</span>
+                                            }
+                                        </td>
+                                        @if (ticket.TicketStatus.Name == "New")
+                                        {
+                                            <td><span class="badge bg-success rounded-pill">@ticket.TicketStatus.Name </span></td>
+
+                                        }
+                                        else
+                                        {
+                                            <td><span class="badge bg-primary rounded-pill">@ticket.TicketStatus.Name </span></td>
+                                        }
+                                        <td><span class="badge bg-dark">@ticket.TicketPriority.Name </span></td>
+                                        <td><span style="font-size:small;">@ticket.Created.ToString("MM-dd-yyyy")</span></td>
+                                        <td>
+                                            <a class="btn btn-sm btn-outline-info-secondary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @* </div> *@
+                    </div>
+
                 </div>
+
             </div>
             <div class="col-md-2 ">
                 <div class="bg-dark">
@@ -407,7 +428,7 @@
         @Model.Tickets.Where(t => t.TicketPriority.Name == nameof(AppTicketPriority.High) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketPriority.Name == nameof(AppTicketPriority.Urgent) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketPriority.Name == nameof(AppTicketPriority.Low) && t.Archived == false).Count()
-                                                                                                                                                                        ],
+                                                                                                                                                                                                ],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -457,7 +478,7 @@
         @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(AppTicketStatus.New) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(AppTicketStatus.Resolved) && t.Archived == false).Count(),
         @Model.Tickets.Where(t => t.TicketStatus.Name == nameof(AppTicketStatus.Testing) && t.Archived == false).Count()
-                                                                                                                                                                ],
+                                                                                                                                                                                        ],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
@@ -511,7 +532,7 @@
                     // Create chart instance
                     var chart = am4core.create("chartdiv", am4charts.XYChart);
 
-                    
+
 
                     // Add data
                     chart.data = result;
@@ -529,7 +550,7 @@
 
                     var valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
                     valueAxis.renderer.opposite = true;
-                  
+
 
 
                     // Create series
@@ -541,7 +562,7 @@
                         series.columns.template.tooltipText = "{name}: [bold]{valueX}[/]";
                         series.columns.template.height = am4core.percent(100);
                         series.sequencedInterpolation = true;
-                       
+
 
                         var valueLabel = series.bullets.push(new am4charts.LabelBullet());
                         valueLabel.label.text = "{valueX}";
@@ -576,4 +597,8 @@
     </script>
 
     <!-- *** End AM Charts *** -->
+    <!-- Data Tables-->
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="/js/datatables-simple-demo.js"></script>
 }
