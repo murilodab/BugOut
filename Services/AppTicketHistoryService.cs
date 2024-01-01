@@ -166,7 +166,7 @@ namespace BugOut.Services
                     Created = DateTimeOffset.Now,
                     UserId = userId,
                     Description = description,
-                    User = ticket.DeveloperUser
+                    //User = ticket.DeveloperUser
                 };
 
                 await _context.TicketHistories.AddAsync(history);

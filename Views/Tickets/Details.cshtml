@@ -221,7 +221,7 @@
                         <div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
                             @*Loop to show the history entries for the Ticket*@
 
-                            @foreach (TicketHistory history in Model.History.OrderByDescending(t=>t.Created))
+                            @foreach (TicketHistory history in (await HistoryService.GetProjectTicketsHistoriesAsync(Model.ProjectId, Model.Project.CompanyId)).OrderByDescending(t => t.Created) @* Model.History.OrderByDescending(t=>t.Created) *@)
                             {
                                 <div class="">
                                     <span class="date">@history.Created.ToString("dd MMM yyyy")</span>
