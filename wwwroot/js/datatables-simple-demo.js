@@ -11,4 +11,9 @@ window.addEventListener('DOMContentLoaded', event => {
     if (datatablesSimpleTickets) {
         new simpleDatatables.DataTable(datatablesSimpleTickets);
     }
+
+    const datatablesSimpleAllProjects = document.getElementById('datatablesSimpleAllProjects');
+    if (datatablesSimpleAllProjects) {
+        new simpleDatatables.DataTable(datatablesSimpleAllProjects);
+    }
 });
