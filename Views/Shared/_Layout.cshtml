@@ -120,10 +120,11 @@
                             </div>
 
 
-                            <a asp-area="" asp-controller="Notifications" asp-action="Index" class="nav-link">
-                                <div class="sb-nav-link-icon"><i class="fs-5 bi-mailbox2"></i></div>
-                                Notifications
-                            </a>
+                            @if (User.IsInRole(nameof(Roles.Admin)))
+                            {
+                                <a class="nav-link" asp-area="" asp-controller="UserRoles" asp-action="ManageUserRoles">Manage Team</a>
+
+                            }
                         }
                     </div>
                 </div>
