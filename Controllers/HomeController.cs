@@ -4,6 +4,7 @@ using BugOut.Models.ChartModels;
 using BugOut.Models.Enums;
 using BugOut.Models.ViewModels;
 using BugOut.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -24,7 +25,7 @@ namespace BugOut.Controllers
             _companyInfoService = companyInfoService;
             _projectService = projectService;
         }
-
+        [Authorize]
         public async Task<IActionResult> Dashboard()
         {
             DashBoardViewModel model = new();
