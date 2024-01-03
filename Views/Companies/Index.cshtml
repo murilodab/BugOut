@@ -1,7 +1,15 @@
-﻿@model IEnumerable<BugOut.Models.Company>
+﻿@using Microsoft.AspNetCore.Identity
+@using BugOut.Services.Interfaces
+
+@model IEnumerable<BugOut.Models.Company>
+@inject UserManager<AppUser> UserManager
+@inject IAppCompanyInfoService CompanyInfoService
+@inject IAppRolesService RolesService
 
 @{
     ViewData["Title"] = "Index";
+    AppUser appUser = await UserManager.GetUserAsync(User);
+    Company company = await CompanyInfoService.GetCompanyInfoByIdAsync(appUser.CompanyId);
 }
 
 <h1>Index</h1>
@@ -39,3 +47,26 @@
 }
     </tbody>
 </table>
+
+@* Temporary | Create a VIEW MODEL for Company Info *@
+<div class="col-12">
+    <div class="bg-dark">
+        <div class="card m-1 p-2">
+            <div class="card-header">
+                <h2>Members</h2>
+                <hr />
+            </div>
+            <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
+
+                @foreach (AppUser member in company.Members)
+                {
+                    <div class="">
+                        <span class="" style="font-weight:bold;">@member.FullName</span>
+                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+    </div>
+</div>
