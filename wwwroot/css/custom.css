@@ -1,0 +1,12 @@
+﻿.card-img-top {
+    width: 100%;
+    height: 15vw;
+    object-fit: contain;
+}
+
+.line-clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
