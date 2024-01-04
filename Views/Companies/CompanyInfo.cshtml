@@ -5,10 +5,11 @@
 @model BugOut.Models.ViewModels.CompanyInfoViewModel
 
 @inject IAppRolesService RolesService
+@inject IAppProjectService ProjectsService
 
 @{
     ViewData["Title"] = "Index";
-   }
+}
 
 <h1 class="text-center mt-3 mb-5">Company Info</h1>
 
@@ -18,11 +19,12 @@
             <div class="card-header d-flex">
                 <h2>@Model.Company.Name</h2>
 
-                @if (User.IsInRole(nameof(Roles.Admin))){
+                @if (User.IsInRole(nameof(Roles.Admin)))
+                {
 
-                     <a class="btn btn-sm btn-outline-secondary ms-auto" asp-action="Edit" asp-controller="Companies" asp-route-id="@Model.Company.Id"><i class="fs-5 bi-pencil"></i></a>
+                    <a class="btn btn-sm btn-outline-secondary ms-auto" asp-action="Edit" asp-controller="Companies" asp-route-id="@Model.Company.Id"><i class="fs-5 bi-pencil"></i></a>
                 }
-               
+
             </div>
 
             <div class="card-body" style="overflow-y:scroll;height:400px;">
@@ -31,24 +33,54 @@
         </div>
     </div>
 
-    <div class="col">    
-            <div class="card">
-                <div class="card-header">
-                    <h2>Members</h2>
-                </div>
-                <div class="card-body" style="overflow-y:scroll;height:400px;background-color:antiquewhite">
-                    @foreach (AppUser member in Model.Members)
-                    {
-                        <div class="">
-                            <span class="" style="font-weight:bold;">@member.FullName</span>
-                            <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
-                        </div>
-                        <hr />
-                    }
-                </div>
-            </div>     
+    <div class="col">
+        <div class="card">
+            <div class="card-header d-flex">
+                <h2>Members</h2>
+                 <h2 class="ms-auto">@Model.Members.Count</h2> 
+            </div>
+            <div class="card-body" style="background-color:antiquewhite">
+                <table class="table table-hover" id="datatablesSimpleMembers">
+                    <thead class="">
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Projects</th>
+                        </tr>
+                    </thead>
+
+                    <tfoot class="">
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Projects</th>
+                        </tr>
+                    </tfoot>
+
+                    <tbody>
+                        @foreach (AppUser member in Model.Members.OrderBy(m => m.FirstName))
+                        {
+                            <tr>
+                                <td><span class="" style="font-weight:bold;">@member.FullName</span></td>
+                                <td><h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6></td>
+                                <td><span>@((await ProjectsService.GetUserProjectsAsync(member.Id)).Count)</span></td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 
 
+@section scripts{
+
+    <!-- Data Tables-->
+
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="/js/datatables-simple-demo.js"></script>
+
+}

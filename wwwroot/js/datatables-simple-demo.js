@@ -16,4 +16,10 @@ window.addEventListener('DOMContentLoaded', event => {
     if (datatablesSimpleAllProjects) {
         new simpleDatatables.DataTable(datatablesSimpleAllProjects);
     }
+
+    const datatablesSimpleMembers = document.getElementById('datatablesSimpleMembers');
+    if (datatablesSimpleMembers) {
+        new simpleDatatables.DataTable(datatablesSimpleMembers);
+    }
+    
 });
