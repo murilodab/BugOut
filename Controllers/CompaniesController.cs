@@ -143,7 +143,7 @@ namespace BugOut.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(CompanyInfo));
             }
             return View(company);
         }
