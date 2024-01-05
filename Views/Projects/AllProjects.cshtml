@@ -84,8 +84,16 @@
             <div class="col mb-3 d-block">
                 <div class="card h-100" style="width:auto;">
 
-                    <img class="card-img-top" src="~/assets/img/default_project_image.jpg" style="height:auto;width:100%;" />
-                    
+
+                    @if (project.ImageFileData != null)
+                    {
+                        <img class="card-img-top" src="data:image/*;base64,@(Convert.ToBase64String(project.ImageFileData))" alt="" />
+                    }
+                    else
+                    {
+                        <img class="card-img-top" src="~/assets/img/default_project_image.jpg" style="height:auto;width:100%;" />
+                    }
+                 
                     <div class="card-header">
                         <div class="row">
                             <div class="col-10">
