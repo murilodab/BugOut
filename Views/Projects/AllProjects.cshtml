@@ -20,7 +20,7 @@
 <div class="row">
     <h2 class="mt-3">Projects List</h2>
 </div>
-<div class="row">
+<div class="row row-cols-1 row-cols-md-2">
     <div class="col">
         @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
         {
@@ -29,9 +29,19 @@
             </p>
         }
     </div>
+
+  
    
-    <div class="col-2 d-flex justify-content-end me-3">
-        
+    <div class="col d-flex justify-content-end ms-auto">
+        <form class=" me-2" asp-action="AllProjects" method="get">
+            <div class="form-actions">
+                <p class="d-flex align-content-center">
+                    <input class="rounded-pill" type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                    <input type="submit" value="Search" class="btn btn-sm btn-outline-primary ms-2" />
+                </p>
+
+            </div>
+        </form>
         @{
             string low = nameof(AppProjectPriority.Low);
             string medium = nameof(AppProjectPriority.Medium);

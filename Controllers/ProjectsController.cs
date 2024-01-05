@@ -63,9 +63,9 @@ namespace BugOut.Controllers
 
         //GET: All Projects
         #region All Projects
-        public async Task<IActionResult> AllProjects(string priority)
+        public async Task<IActionResult> AllProjects(string priority, string searchString)
         {
-
+            ViewData["CurrentFilter"] = searchString;
 
             List<Project> projects = new();
 
@@ -90,7 +90,12 @@ namespace BugOut.Controllers
                 projects = projects.Where(p => p.ProjectPriority.Name == priority).ToList();
             }
 
-            return View(projects);
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                projects = projects.Where(p => p.Name.ToLower().Contains(searchString.ToLower())).ToList();
+            }
+
+                return View(projects);
         }
         #endregion
 
