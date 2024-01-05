@@ -1,6 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using BugOut.Models.Enums
 @using BugOut.Services.Interfaces
+@using BugOut.Extensions;
+
 
 @inject SignInManager<AppUser> SignInManager
 @inject UserManager<AppUser> UserManager
@@ -14,7 +16,8 @@
     if (SignInManager.IsSignedIn(User))
     {
         AppUser appUser = await UserManager.GetUserAsync(User);
-        Company company = await CompanyInfoService.GetCompanyInfoByIdAsync(appUser.CompanyId);
+        int companyId = User.Identity.GetCompanyId().Value;
+        Company company = await CompanyInfoService.GetCompanyInfoByIdAsync(companyId);
         companyName = company.Name;
     }
     
