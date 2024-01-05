@@ -17,7 +17,7 @@
 
 
 
-<div class="row">
+<div class="row mb-3">
     <h2 class="mt-3">Projects List</h2>
 </div>
 <div class="row row-cols-1 row-cols-md-2">
@@ -25,7 +25,7 @@
         @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
         {
             <p>
-                <a class="btn rounded-pill bg-danger text-light" asp-action="Create">+ Create Project</a>
+                <a class="btn btn-sm rounded-pill bg-danger text-light" asp-action="Create">+ Create Project</a>
             </p>
         }
     </div>
@@ -36,7 +36,7 @@
         <form class=" me-2" asp-action="AllProjects" method="get">
             <div class="form-actions">
                 <p class="d-flex align-content-center">
-                    <input class="rounded-pill" type="text" name="SearchString" value="@ViewData["CurrentFilter"]" />
+                    <input class="rounded-pill text-center" type="text" name="SearchString" value="@ViewData["CurrentFilter"]" placeholder="Search Projects"/>
                     <input type="submit" value="Search" class="btn btn-sm btn-outline-primary ms-2" />
                 </p>
 
@@ -77,93 +77,98 @@
 
 </div>
 
-<div class="row row-cols-1 row-cols-md-2 gy-3">
+<div class="container-fluid d-flex justify-content-center">
+    <div class="row row-cols-1 row-cols-xxl-4 row-cols-md-2 p-2" style="width:90%">
+        @foreach (Project project in Model.OrderByDescending(p => p.StartDate))
+        {
+            <div class="col mb-3 d-block">
+                <div class="card h-100" style="width:auto;">
 
+                    <img class="card-img-top" src="~/assets/img/default_project_image.jpg" style="height:auto;width:100%;" />
+                    
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-10">
+                                <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:black;">
 
-    @foreach (Project project in Model.OrderByDescending(p => p.StartDate))
-    {
-        <div class="col">
-            <div class="card h-100" style="height:15rem">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col-10">
-                            <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color:black;">
+                                    <h4 class="card-title">@project.Name</h4>
 
-                                <h4 class="card-title">@project.Name</h4>
+                                </a>
 
-                            </a>
-
-                            <span class="badge bg-dark">@project.ProjectPriority?.Name</span>
-                            @if (project.Archived)
-                            {
-                                <span class="badge bg-warning">Archived</span>
-                            }
-
-                        </div>
-
-                        @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(appUser.Id, project.Id))
-                        {
-                            <div class="col-2 d-flex justify-content-end">
-                                <div class="dropdown mt-1">
-                                    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id"><i class="fa-regular fa-pen-to-square me-2"></i>Edit</a>
-                                        </li>
-                                        <li>
-                                            @if (!project.Archived)
-                                            {
-                                                <a class="dropdown-item" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id"><i class="fa-solid fa-box-archive me-2"></i><span>Archive</span></a>
-                                            }
-                                            else
-                                            {
-                                                <a class="dropdown-item" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id"> <i class="fa-solid fa-trash-can-arrow-up"></i><span>Restore</span></a>
-                                            }
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        }
-
-
-                    </div>
-
-                </div>
-                <div class="card-body">
-                    <span class="card-text line-clamp mb-2">@project.Description</span>
-                    <span>Tickets: @project.Tickets.Count </span>|
-                    <span>Developers: @project.Members.Count </span>
-
-                </div>
-
-                <div class="card-footer">
-                    <div>
-                        <div class="progress-container progress-info m-b-25">
-                            <span class="progress-badge" style="font-size:small">Progress</span>
-                            <div class="progress">
-                                @* Razor code block *@
-
-                                @{
-                                    var start = project.StartDate.DateTime;
-                                    var end = project.EndDate.DateTime;
-                                    var today = DateTime.Now;
-                                    var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+                                <span class="badge bg-dark">@project.ProjectPriority?.Name</span>
+                                @if (project.Archived)
+                                {
+                                    <span class="badge bg-warning">Archived</span>
                                 }
 
-                                <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
-                                    @* Use Progress Bar code variable here *@
-                                    <span class="progress-value">@percent%</span>
+                            </div>
+
+                            @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(appUser.Id, project.Id))
+                            {
+                                <div class="col-2 d-flex justify-content-end">
+                                    <div class="dropdown mt-1">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-ellipsis"></i></button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a class="dropdown-item" asp-action="Edit" asp-controller="Projects" asp-route-id="@project.Id"><i class="fa-regular fa-pen-to-square me-2"></i>Edit</a>
+                                            </li>
+                                            <li>
+                                                @if (!project.Archived)
+                                                {
+                                                    <a class="dropdown-item" asp-action="Archive" asp-controller="Projects" asp-route-id="@project.Id"><i class="fa-solid fa-box-archive me-2"></i><span>Archive</span></a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="dropdown-item" asp-action="Restore" asp-controller="Projects" asp-route-id="@project.Id"> <i class="fa-solid fa-trash-can-arrow-up"></i><span>Restore</span></a>
+                                                }
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            }
+
+
+                        </div>
+
+                    </div>
+                    <div class="card-body">
+                        <span class="card-text line-clamp mb-2">@project.Description</span>
+                        <span>Tickets: @project.Tickets.Count </span>|
+                        <span>Developers: @project.Members.Count </span>
+
+                    </div>
+
+                    <div class="card-footer">
+                        <div>
+                            <div class="progress-container progress-info m-b-25">
+                                <span class="progress-badge" style="font-size:small">Progress</span>
+                                <div class="progress">
+                                    @* Razor code block *@
+
+                                    @{
+                                        var start = project.StartDate.DateTime;
+                                        var end = project.EndDate.DateTime;
+                                        var today = DateTime.Now;
+                                        var percent = today >= end ? 100 : today < start ? 0 : Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
+                                    }
+
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: @percent%;">
+                                        @* Use Progress Bar code variable here *@
+                                        <span class="progress-value">@percent%</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+
+    </div>
 
 </div>
+
 
 
 

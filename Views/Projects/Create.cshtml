@@ -35,8 +35,8 @@
                 <span asp-validation-for="Project.EndDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label class="control-label">Choose a priority</label>
-                <select asp-for="Project.ProjectPriority" class ="form-control" asp-items="@Model.PriorityList"></select>
+                <label asp-for="Project.ProjectPriorityId" class="control-label">Choose a priority</label>
+                <select asp-for="Project.ProjectPriorityId" class ="form-control" asp-items="@Model.PriorityList"></select>
             </div>
 
             @* Image Capture *@
