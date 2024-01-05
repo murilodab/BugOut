@@ -23,7 +23,7 @@ namespace BugOut.Controllers
     public class ProjectsController : Controller
     {
         private readonly IAppLookupService _lookupService;
-        
+
         private readonly IAppRolesService _rolesService;
         private readonly IAppFileService _fileService;
         private readonly IAppProjectService _projectService;
@@ -38,7 +38,7 @@ namespace BugOut.Controllers
             UserManager<AppUser> userManager,
             IAppCompanyInfoService companyInfoService)
         {
-            
+
             _rolesService = rolesService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -63,21 +63,31 @@ namespace BugOut.Controllers
 
         //GET: All Projects
         #region All Projects
-        public async Task<IActionResult> AllProjects()
+        public async Task<IActionResult> AllProjects(string priority)
         {
 
 
             List<Project> projects = new();
 
+
+
             int companyId = User.Identity.GetCompanyId().Value;
 
             if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
             {
+
                 projects = await _companyInfoService.GetAllProjectsAsync(companyId);
+
+
             }
             else
             {
-                projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+                projects = (await _projectService.GetAllProjectsByCompanyAsync(companyId));
+            }
+
+            if (!String.IsNullOrEmpty(priority))
+            {
+                projects = projects.Where(p => p.ProjectPriority.Name == priority).ToList();
             }
 
             return View(projects);
@@ -144,7 +154,7 @@ namespace BugOut.Controllers
 
             }
 
-            return RedirectToAction(nameof(AssignPM), new {projectId =  model.Project.Id});
+            return RedirectToAction(nameof(AssignPM), new { projectId = model.Project.Id });
         }
 
         #endregion
@@ -180,18 +190,18 @@ namespace BugOut.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignMembers(ProjectMembersViewModel model)
         {
-            if(model.SelectedUsers != null)
+            if (model.SelectedUsers != null)
             {
                 List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id)).Select(m => m.Id).ToList();
 
                 //Remove current members
-                foreach(string member in memberIds)
+                foreach (string member in memberIds)
                 {
                     await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
                 }
 
                 //Add selected members
-                foreach(string member in model.SelectedUsers)
+                foreach (string member in model.SelectedUsers)
                 {
                     await _projectService.AddUserToProjectAsync(member, model.Project.Id);
                 }
@@ -201,7 +211,7 @@ namespace BugOut.Controllers
 
             }
 
-            return RedirectToAction(nameof(AssignMembers), new {id = model.Project.Id});
+            return RedirectToAction(nameof(AssignMembers), new { id = model.Project.Id });
         }
 
         #endregion
