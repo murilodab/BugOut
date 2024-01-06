@@ -345,6 +345,8 @@ namespace BugOut.Controllers
 
                 try
                 {
+                    Project oldProject = await _projectService.GetProjectAsNoTrackingAsync(model.Project.Id, model.Project.CompanyId);
+
                     if (model.Project.ImageFormFile != null)
                     {
                         model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
@@ -373,6 +375,8 @@ namespace BugOut.Controllers
                         throw;
                     }
                 }
+                Project newProject = await _projectService.GetProjectAsNoTrackingAsync(model.Project.Id, model.Project.CompanyId);
+                //TODO: Create Project History
 
                 //TODO: Redirect to All Projects
                 return RedirectToAction("AllProjects");

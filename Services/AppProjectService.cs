@@ -5,6 +5,7 @@ using BugOut.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Build.Construction;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace BugOut.Services
 {
@@ -499,5 +500,35 @@ namespace BugOut.Services
             return result;
         }
         #endregion
+
+        public async Task<Project> GetProjectAsNoTrackingAsync(int projectId, int companyId)
+        {
+            try
+            {
+                Project project = await _context.Projects
+                                                           .Include(p => p.Tickets)
+                                                               .ThenInclude(t => t.TicketPriority)
+                                                           .Include(p => p.Tickets)
+                                                               .ThenInclude(t => t.TicketStatus)
+                                                           .Include(p => p.Tickets)
+                                                               .ThenInclude(t => t.TicketType)
+                                                           .Include(p => p.Tickets)
+                                                               .ThenInclude(t => t.DeveloperUser)
+                                                           .Include(p => p.Tickets)
+                                                               .ThenInclude(t => t.OwnerUser)
+                                                           .Include(p => p.Members)
+                                                           .Include(p => p.ProjectPriority)
+                                                           .AsNoTracking()
+                                                           .FirstOrDefaultAsync(p => p.Id == projectId && p.CompanyId == companyId);
+
+                return project;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        
     }
 }
