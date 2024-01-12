@@ -44,15 +44,17 @@
         <!-- Navbar Brand-->
         <a asp-area="" asp-controller="Home" asp-action="Dashboard" class="ps-3"><img class="img-fluid me-5" width="150" src="~/assets/img/Bug_out.svg" /></a>
         <!-- Sidebar Toggle-->
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <div class="row d-flex align-items-center w-100 me-3">
+            <div class="d-flex col-4 col-md-2 justify-content-center">
+                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            </div>
+            
 
-
-        <div class="row d-flex align-items-center w-100 me-3 justify-content-end">
-
-            <div class="col-2">
+            <div class="col-8 d-flex col-md-2 justify-content-end">
                 <partial name="_LoginPartial" />
             </div>
         </div>
+
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
